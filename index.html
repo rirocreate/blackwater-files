@@ -3,360 +3,899 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Blackwater Files</title>
-<link rel="icon" type="image/png" href="icon.png">
+<title>Blackwater Files</title>
 <style>
-html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font-family:"Helvetica",sans-serif; background:black; }
-.game-container { width:100vw; height:100vh; overflow:hidden; position:relative; }
+/* ===== Global ===== */
+body, html {
+  margin:0;
+  padding:0;
+  font-family: Arial, sans-serif;
+  height:100%;
+  overflow:hidden;
+  background:black;
+}
 
-/* INTRO SCREEN */
+/* ===== Intro Screen ===== */
 #intro-screen {
-  position:absolute; top:0; left:0; width:100%; height:100%;
-  background:black; color:white; display:flex;
-  flex-direction:column; justify-content:center; align-items:center;
-  text-align:center; opacity:0; z-index:200;
-  animation: intro-fade 1s ease forwards;
-  pointer-events:auto;
+  position:absolute; top:0; left:0;
+  width:100%; height:100%;
+  background-color:black;
+  color:white;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  z-index:500;
+  transition: opacity 0.5s;
 }
-#intro-screen h1 { font-size:28px; margin-bottom:20px; }
-#intro-screen p { font-size:16px; margin:6px 0; max-width:80%; }
-#intro-screen ul { list-style:none; padding:0; }
-#intro-screen ul li { margin:5px 0; }
-#start-game-btn {
-  font-size:22px; padding:15px 30px; margin-top:20px; border:2px solid grey; border-radius:4px; background-color:black; color:white; cursor:pointer; z-index:210;
-  transition: background 0.2s, transform 0.2s;
+#intro-screen h1 { font-size:2em; margin-bottom:1em; text-align:center; }
+#intro-screen p { max-width:80%; text-align:center; margin-bottom:2em; }
+#start-btn {
+  padding: 15px 30px;
+  background-color:#444;
+  color:white;
+  border:2px solid grey;
+  border-radius:0;
+  cursor:pointer;
+  font-size:1.2em;
 }
-#start-game-btn:hover { background-color:grey; transform:scale(1.05); }
-@keyframes intro-fade { 0% {opacity:0; transform:scale(0.95);} 100% {opacity:1; transform:scale(1);} }
 
-/* INTERFACES */
-.interface { width:100%; height:100%; position:absolute; top:0; left:100%; transition:left 0.5s ease, opacity 0.5s ease; display:flex; flex-direction:column; overflow-y:auto; padding:0; background-size:cover; opacity:0; }
+/* ===== Interfaces ===== */
+.interface {
+  position:absolute;
+  top:0; left:100%;
+  width:100%; height:100%;
+  transition: all 0.5s;
+  overflow:hidden;
+  background-size: cover;
+  background-position: center;
+}
 .interface.active { left:0; opacity:1; }
-.nav-arrow { position:absolute; bottom:10px; width:40px; height:40px; opacity:0.8; cursor:pointer; z-index:20; background-size:cover; }
-.nav-arrow.left { left:10px; }
-.nav-arrow.right { right:10px; }
 
-/* STATUS BAR */
-#status-bar { position:absolute; top:0; left:0; width:100%; height:25px; display:flex; justify-content:space-between; align-items:center; padding:0 8px; z-index:100; background:rgba(0,0,0,0.6); }
-#status-bar #time { color:white; font-size:12px; }
-#status-icons img { display:inline-block; vertical-align:middle; width:18px; height:18px; }
+/* ===== Barre du haut (heure, réseau, batterie) ===== */
+.status-bar {
+  position:absolute; top:0; left:0; width:100%; height:30px;
+  display:flex; justify-content:space-between; align-items:center;
+  color:white; font-size:14px; padding:0 10px;
+  background:rgba(0,0,0,0.5);
+  z-index:200;
+}
+.status-bar div { display:flex; align-items:center; }
 
-/* PHONE INTERFACE */
-#phone-interface { background:url('backgrounds/phone-bg.jpg') no-repeat center/cover; }
-#home-screen { display:flex; flex-wrap:wrap; justify-content:space-around; align-content:flex-start; padding:10px; }
-.app-icon { width:60px; height:60px; margin:10px; border-radius:15px; cursor:pointer; background-size:cover; }
-.app-window { position:absolute; top:25px; left:0; width:100%; height:calc(100% - 25px); display:none; flex-direction:column; overflow-y:auto; padding:10px; z-index:10; border-radius:0; background-size:cover; text-align:center; }
-.app-window.active { display:flex; }
-.back-btn, .reset-btn { background:#007aff; color:#fff; border:none; padding:8px 12px; border-radius:10px; margin-bottom:10px; cursor:pointer; }
+/* ===== Applications ===== */
+.apps { display:flex; flex-wrap:wrap; padding:10px; justify-content:center; margin-top:40px; }
+.app {
+  width:60px; height:60px; margin:5px; border-radius:15px;
+  background-color:#222; display:flex; justify-content:center; align-items:center;
+  cursor:pointer; position:relative;
+}
+.app img { width:80%; height:80%; }
 
-/* MESSAGES */
-#chat .message { padding:10px 14px; border-radius:20px; max-width:80%; margin:6px auto; word-wrap:break-word; background:#e0e0ff; opacity:0; transition: opacity 0.5s ease; text-align:center; }
+/* ===== Chat / Messages ===== */
+#chat { 
+  position:absolute; bottom:0; left:0; width:100%; height:70%; 
+  overflow-y:auto; display:flex; flex-direction:column; padding:10px;
+}
+.message {
+  background:rgba(255,255,255,0.1);
+  color:white;
+  margin:5px 0;
+  padding:10px;
+  border-radius:10px;
+  max-width:80%;
+  align-self:center;
+  opacity:0;
+  transition: opacity 0.5s;
+}
 
-/* BUREAU */
-#bureau-interface { background:url('backgrounds/bureau-bg.jpg') no-repeat center/cover; }
-.bureau { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; padding:15px; }
-.photo { width:100px; height:100px; margin:10px; border:2px solid #ccc; border-radius:8px; cursor:pointer; }
-
-/* ORDINATEUR */
-#ordi-interface { background:url('backgrounds/ordi-bg.jpg') no-repeat center/cover; }
-.ordinateur { background: rgba(240,240,240,0.9); border-radius:15px; padding:10px; flex:1; overflow-y:auto; text-align:center; }
-.window { background:#fff; border:2px solid #666; padding:10px; border-radius:10px; margin:8px 0; cursor:pointer; }
-
-/* ICONS */
-.app-icon[data-app="messenger"] { background-image:url('icons/messenger.png'); }
-.app-icon[data-app="instafaux"] { background-image:url('icons/instafaux.png'); }
-.app-icon[data-app="twitfake"] { background-image:url('icons/twitfake.png'); }
-.app-icon[data-app="web"] { background-image:url('icons/web.png'); }
-.app-icon[data-app="notes"] { background-image:url('icons/notes.png'); }
-.app-icon[data-app="mailfaux"] { background-image:url('icons/mail.png'); }
-.app-icon[data-app="calendar"] { background-image:url('icons/calendar.png'); }
-.app-icon[data-app="photos"] { background-image:url('icons/photos.png'); }
-.app-icon[data-app="mapsfake"] { background-image:url('icons/maps.png'); }
-.app-icon[data-app="contacts"] { background-image:url('icons/contacts.png'); }
-.app-icon[data-app="todo"] { background-image:url('icons/todo.png'); }
-.app-icon[data-app="appstorefake"] { background-image:url('icons/appstore.png'); }
-.app-icon[data-app="settings"] { background-image:url('icons/settings.png'); }
-
-/* FLÈCHES */
-.nav-arrow.left { background-image:url('icons/left-arrow.png'); }
-.nav-arrow.right { background-image:url('icons/right-arrow.png'); }
-
-/* TRANSITIONS */
-#day-transition, #mini-game-screen { transition:opacity 1s; }
-
-/* ANIMATIONS */
-.app-icon:hover { transform:scale(1.1); transition:transform 0.2s ease; }
+/* ===== Overlay mini-jeu ===== */
+#mini-overlay {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:black; opacity:0; display:none; justify-content:center; align-items:center;
+  z-index:400; color:white; font-size:1.5em; text-align:center;
+}
 </style>
 </head>
 <body>
-<div class="game-container">
 
-<!-- INTRO SCREEN -->
+<!-- Intro -->
 <div id="intro-screen">
-  <h1>The Blackwater Files</h1>
-  <p>Tu es sur le point d’entrer dans l’enquête de Blackwater.</p>
-  <p>Objectif : Collecter les indices et comprendre la vérité.</p>
-  <p>Il existe 3 fins possibles :</p>
-  <ul>
-    <li>Fin Réveil 🕊️</li>
-    <li>Fin Vérité Totale 🔥</li>
-    <li>Fin Silence 🕳️</li>
-  </ul>
-  <button id="start-game-btn">INIZIATE</button>
+  <h1>Blackwater Files</h1>
+  <p>Vous allez enquêter sur Blackwater. Découvrez les indices, résolvez les mini-jeux, et choisissez votre destin.<br>3 fins possibles : heureuse, révélation complète, mauvaise.</p>
+  <button id="start-btn">Iniziate</button>
 </div>
 
-<div class="nav-arrow left"></div>
-<div class="nav-arrow right"></div>
-
-<!-- PHONE INTERFACE -->
-<div class="interface" id="phone-interface">
-  <div id="status-bar">
+<!-- Téléphone -->
+<div id="phone-interface" class="interface" style="background:url('backgrounds/phone-bg.jpg');">
+  <div class="status-bar">
     <div id="time">12:00</div>
-    <div id="status-icons">
-      <img id="signal-icon" src="icons/signal.png">
-      <img id="wifi-icon" src="icons/wifi.png">
-      <img id="battery-icon" src="icons/battery-full.png">
-    </div>
+    <div>📶 <span id="battery">🔋 100%</span></div>
   </div>
-  <div id="home-screen">
-    <!-- 12 applis -->
-    <div class="app-icon" data-app="messenger"></div>
-    <div class="app-icon" data-app="instafaux"></div>
-    <div class="app-icon" data-app="twitfake"></div>
-    <div class="app-icon" data-app="web"></div>
-    <div class="app-icon" data-app="notes"></div>
-    <div class="app-icon" data-app="mailfaux"></div>
-    <div class="app-icon" data-app="calendar"></div>
-    <div class="app-icon" data-app="photos"></div>
-    <div class="app-icon" data-app="mapsfake"></div>
-    <div class="app-icon" data-app="contacts"></div>
-    <div class="app-icon" data-app="todo"></div>
-    <div class="app-icon" data-app="appstorefake"></div>
-    <div class="app-icon" data-app="settings"></div>
+  <div class="apps" id="phone-apps">
+    <!-- Icônes seront créées par JS -->
   </div>
-  <!-- Fenêtres apps -->
-  <div class="app-window" id="messenger"><button class="back-btn">🏠 Accueil</button><div id="chat"></div></div>
-  <div class="app-window" id="instafaux"><button class="back-btn">🏠 Accueil</button><div id="insta-content"></div></div>
-  <div class="app-window" id="twitfake"><button class="back-btn">🏠 Accueil</button><div id="twit-content"></div></div>
-  <div class="app-window" id="web"><button class="back-btn">🏠 Accueil</button><div id="web-content"></div></div>
-  <div class="app-window" id="notes"><button class="back-btn">🏠 Accueil</button><div id="notes-content"></div></div>
-  <div class="app-window" id="mailfaux"><button class="back-btn">🏠 Accueil</button><div id="mail-content"></div></div>
-  <div class="app-window" id="calendar"><button class="back-btn">🏠 Accueil</button><div id="calendar-content"></div></div>
-  <div class="app-window" id="photos"><button class="back-btn">🏠 Accueil</button><div id="photos-content"></div></div>
-  <div class="app-window" id="mapsfake"><button class="back-btn">🏠 Accueil</button><div id="maps-content"></div></div>
-  <div class="app-window" id="contacts"><button class="back-btn">🏠 Accueil</button><div id="contacts-content"></div></div>
-  <div class="app-window" id="todo"><button class="back-btn">🏠 Accueil</button><div id="todo-content"></div></div>
-  <div class="app-window" id="appstorefake"><button class="back-btn">🏠 Accueil</button><div id="appstore-content"></div></div>
-  <div class="app-window" id="settings"><button class="back-btn">🏠 Accueil</button><button class="reset-btn">🔄 Recommencer le jeu</button></div>
+  <div id="chat"></div>
 </div>
 
-<!-- BUREAU -->
-<div class="interface" id="bureau-interface">
-  <div class="bureau">
-    <h3 style="color:#fff;">Bureau d'ado</h3>
-    <div class="photo" onclick="collectFile(); alert('Indice trouvé !')"><img src="bureau/photo1.jpg" style="width:100px;"></div>
-    <div class="photo" onclick="collectSymbol('☿')"><img src="bureau/note1.jpg" style="width:100px;"></div>
-    <div class="photo" onclick="collectSymbol('🜍')"><img src="bureau/objet1.png" style="width:100px;"></div>
+<!-- Bureau -->
+<div id="bureau-interface" class="interface" style="background:url('backgrounds/bureau-bg.jpg');">
+  <div class="status-bar">
+    <div id="time-bureau">12:00</div>
+    <div>📶 <span id="battery-bureau">🔋 100%</span></div>
   </div>
 </div>
 
-<!-- ORDI -->
-<div class="interface" id="ordi-interface">
-  <div class="ordinateur">
-    <h3>Ordinateur</h3>
-    <div class="ordi-content" id="ordi-content">
-      <div class="window" onclick="collectFile(); alert('Fichier ouvert !')">
-        <h4>Dossier adoption</h4>
-        <p>Contenu du fichier Blackwater…</p>
-      </div>
-    </div>
+<!-- Ordinateur -->
+<div id="ordi-interface" class="interface" style="background:url('backgrounds/ordi-bg.jpg');">
+  <div class="status-bar">
+    <div id="time-ordi">12:00</div>
+    <div>📶 <span id="battery-ordi">🔋 100%</span></div>
   </div>
 </div>
 
-<audio id="bg-music" loop autoplay>
-  <source src="calme.mp3" type="audio/mp3">
-</audio>
+<!-- Mini-jeu Overlay -->
+<div id="mini-overlay"></div>
 
 <script>
-// ===== START GAME =====
-document.addEventListener("DOMContentLoaded", function() {
-  const startBtn = document.getElementById('start-game-btn');
-  startBtn.addEventListener('click', () => {
-    const intro = document.getElementById('intro-screen');
-    intro.style.transition = 'opacity 1s';
-    intro.style.opacity = 0;
-    setTimeout(() => {
-      intro.style.display = 'none';
-      const phone = document.getElementById('phone-interface');
-      phone.classList.add('active');
-      startStory();
-    }, 1000);
-  });
-});
-
-// ===== STORY & MESSAGES =====
-let infoCount=0, day=1, storyIndex=0;
-const chat=document.getElementById('chat');
-const storyInfos=[
-  "Prologue…",
-  "📩 23:41 - Evan Cross…",
-  "Une photo sombre…",
-  "📩 23:43 - Evan…",
-  "🎙️ Audio transcription…",
-  "Respiration rapide…",
-  "📂 Premier dossier…",
-  "📩 00:02 - Evan…",
-  "C’est votre maison…",
-  "If you’re still reading…"
-  // Ici tu peux continuer en ajoutant tous les messages jour 1 à 100
-];
-function addMessage(text){
-  const div=document.createElement('div'); div.className='message'; div.style.opacity=0; div.textContent=text;
-  chat.appendChild(div);
-  let op=0;
-  const fade=setInterval(()=>{op+=0.05; div.style.opacity=op; if(op>=1) clearInterval(fade);},50);
-  infoCount++; if(infoCount%10===0){day++; alert("Changement de jour !"); startMiniGame();}
-}
-function startStory(){const interval=setInterval(()=>{if(storyIndex<storyInfos.length) addMessage(storyInfos[storyIndex++]); else clearInterval(interval);},4000);}
-
-// ===== MINI GAMES =====
-function startMiniGame(){alert("Mini-jeu à jouer !");}
-
-// ===== COLLECT INDICES =====
-function collectSymbol(sym){alert(`🔎 Symbole ${sym} trouvé !`);}
-function collectFile(){alert("📂 Fichier PC trouvé !");}
-</script>
-</body>
-</html><script>
-// ===== STORY 100 JOURS =====
-const jours = {
-  1: [
-    "Prologue…",
-    "📩 23:41 - Evan Cross : 'Ils ne me cherchent plus…'",
-    "Une photo sombre avec un symbole ☿…",
-    "📩 23:43 - Evan : 'Blackwater n'était pas un orphelinat…'",
-    "🎙️ Audio transcription : 'Ils nous ont dit qu'on était adoptés…'",
-    "Respiration rapide…",
-    "📂 Premier dossier reçu : 'Adoption Records'",
-    "📩 00:02 - Evan : 'C’est votre maison…'",
-    "Un objet presque invisible marqué ☿…",
-    "If you’re still reading… vous êtes déjà impliqué."
-  ],
-  2: [
-    "Jour 2 : Découverte du téléphone",
-    "Un message de Claire Holloway vous guide…",
-    "Indices sur la disparition d’Evan…",
-    "Photo d’archive marquée 🜍",
-    "Mini-jeu : Choisir un chiffre entre 1 et 5 pour déverrouiller le dossier",
-    "Révélation d’un symbole inconnu sur le carnet…",
-    "Vous trouvez un email mystérieux",
-    "Petit article de journal local : 'Incendie à Blackwater…'",
-    "Claire envoie un nouvel indice",
-    "Fin du jour 2, préparez-vous pour le mini-jeu"
-  ],
-  3: [
-    "Jour 3 : Bureau d’ado",
-    "Exploration du bureau…",
-    "Photo trouvée avec symbole ☿",
-    "Mini-jeu : Trouver l’objet caché sur le bureau",
-    "Indice caché dans un carnet",
-    "Nouvelle notification sur le téléphone",
-    "Email suspect de Margaret Whitman",
-    "Une vidéo étrange apparaît dans l’application Photos",
-    "Fin du jour 3",
-    "Transition vers le mini-jeu"
-  ],
-  // … continuez de la même manière pour les jours 4 à 100 …
-  4: ["Messages et indices jour 4…"],
-  5: ["Messages et indices jour 5…"],
-  6: ["Messages et indices jour 6…"],
-  7: ["Messages et indices jour 7…"],
-  8: ["Messages et indices jour 8…"],
-  9: ["Messages et indices jour 9…"],
-  10: ["Messages et indices jour 10…", "Mini-jeu important du jour 10…"],
-  11: ["Jour 11…"],
-  12: ["Jour 12…"],
-  13: ["Jour 13…"],
-  14: ["Jour 14…"],
-  15: ["Jour 15…"],
-  16: ["Jour 16…"],
-  17: ["Jour 17…"],
-  18: ["Jour 18…"],
-  19: ["Jour 19…"],
-  20: ["Jour 20…"],
-  // …
-  100: ["Jour 100 : Révélation finale…", "Fin du jeu : choisir votre fin parmi 3 possibles…"]
-};
-
-// ===== VARIABLES =====
+// ===== Variables globales =====
+let currentInterface = 0; // 0=phone,1=bureau,2=ordi
+const interfaces = ['phone-interface','bureau-interface','ordi-interface'];
 let currentDay = 1;
 let infoCount = 0;
-let storyIndex = 0;
+let messageIndex = 0;
 const chat = document.getElementById('chat');
+const miniOverlay = document.getElementById('mini-overlay');
 
-// ===== FUNCTIONS =====
+// ===== Exemple d'applications =====
+const appsData = [
+  {name:"Messages",icon:"icons/messages.png",content:["Message 1","Message 2"]},
+  {name:"Photos",icon:"icons/photos.png",content:["Photo 1","Photo 2"]},
+  {name:"Email",icon:"icons/email.png",content:["Email 1","Email 2"]},
+  {name:"Journal",icon:"icons/journal.png",content:["Journal entry 1"]},
+  {name:"Réseau",icon:"icons/social.png",content:["Post 1","Post 2"]},
+  {name:"Notes",icon:"icons/notes.png",content:["Note 1"]},
+  {name:"Fichiers",icon:"icons/files.png",content:["Fichier 1"]},
+  {name:"Camera",icon:"icons/camera.png",content:["Photo 1"]},
+  {name:"Maps",icon:"icons/maps.png",content:["Indice 1"]},
+  {name:"Musique",icon:"icons/music.png",content:["Audio 1"]},
+  {name:"Contacts",icon:"icons/contacts.png",content:["Contact 1"]},
+  {name:"Paramètres",icon:"icons/settings.png",content:["Recommencer le jeu"]}
+];
+
+// ===== Création des icônes =====
+const phoneApps = document.getElementById('phone-apps');
+appsData.forEach(app=>{
+  const div = document.createElement('div');
+  div.className="app";
+  const img = document.createElement('img');
+  img.src = app.icon;
+  div.appendChild(img);
+  div.addEventListener('click', ()=>{
+    showAppContent(app);
+  });
+  phoneApps.appendChild(div);
+});
+
+// ===== Affichage contenu app =====
+function showAppContent(app){
+  chat.innerHTML="";
+  app.content.forEach(text=>{
+    addMessage(text);
+  });
+}
+
+// ===== Ajout d'un message =====
 function addMessage(text){
   const div = document.createElement('div');
-  div.className = 'message';
-  div.style.opacity = 0;
-  div.textContent = text;
+  div.className='message';
+  div.textContent=text;
   chat.appendChild(div);
-  // apparition progressive
-  let op = 0;
-  const fade = setInterval(()=>{
-    op += 0.05;
-    div.style.opacity = op;
+  let op=0;
+  const fade=setInterval(()=>{
+    op+=0.05;
+    div.style.opacity=op;
     if(op>=1) clearInterval(fade);
-  }, 50);
-
+  },50);
   infoCount++;
-  // Passage de jour toutes les 10 infos
-  if(infoCount % 10 === 0){
+  if(infoCount %10===0){
     currentDay++;
-    if(currentDay <= 100){
-      alert(`Changement de jour ! Jour ${currentDay}`);
-      startMiniGame();
-    }
+    startMiniGame();
   }
 }
 
-// ===== LANCER L'HISTOIRE =====
+// ===== Mini-jeux =====
+function startMiniGame(){
+  miniOverlay.style.display='flex';
+  miniOverlay.style.opacity=0;
+  let op=0;
+  const fadeIn = setInterval(()=>{
+    op+=0.05;
+    miniOverlay.style.opacity=op;
+    if(op>=1){
+      clearInterval(fadeIn);
+      setTimeout(runMiniGame,2000);
+    }
+  },50);
+}
+
+function runMiniGame(){
+  const choix = prompt("Mini-jeu : choisissez un chiffre entre 1 et 5");
+  alert(`Vous avez choisi : ${choix}`);
+  const fadeOut = setInterval(()=>{
+    let op=parseFloat(miniOverlay.style.opacity);
+    op-=0.05;
+    miniOverlay.style.opacity=op;
+    if(op<=0){
+      clearInterval(fadeOut);
+      miniOverlay.style.display='none';
+    }
+  },50);
+}
+
+// ===== Swipe / changement interface =====
+function showInterface(index){
+  interfaces.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(i===index) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+}
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'){
+    currentInterface=(currentInterface+1)%3;
+    showInterface(currentInterface);
+  }
+  if(e.key==='ArrowLeft'){
+    currentInterface=(currentInterface+2)%3;
+    showInterface(currentInterface);
+  }
+});
+
+// ===== Lancement du jeu =====
+document.getElementById('start-btn').addEventListener('click',()=>{
+  document.getElementById('intro-screen').style.opacity=0;
+  setTimeout(()=>{
+    document.getElementById('intro-screen').style.display='none';
+    showInterface(0); // téléphone visible
+    startStory();
+  },1000);
+});
+
+// ===== Story exemple =====
+const jours = {
+  1:["Bienvenue dans Blackwater…","Votre enquête commence maintenant.","Cherchez les indices.","Collectez les symboles.","Mini-jeux toutes les 10 infos…"],
+  2:["Jour 2 : téléchargez le dossier…","Photo étrange sur le bureau…","Mini-jeu à résoudre…"],
+  3:["Jour 3 : messages de Claire…","Indice trouvé dans les fichiers…"]
+};
+
 function startStory(){
   if(!jours[currentDay]) return;
-  const messages = jours[currentDay];
-  let idx = 0;
-  const interval = setInterval(()=>{
-    if(idx < messages.length){
+  const messages=jours[currentDay];
+  let idx=0;
+  const interval=setInterval(()=>{
+    if(idx<messages.length){
       addMessage(messages[idx++]);
     } else {
       clearInterval(interval);
     }
-  }, 4000); // 4 secondes entre chaque message
+  },4000);
 }
 
-// ===== MINI-GAMES =====
-function startMiniGame(){
-  // transition noir 2s
-  const overlay = document.createElement('div');
-  overlay.style.position='absolute';
-  overlay.style.top='0'; overlay.style.left='0';
-  overlay.style.width='100%'; overlay.style.height='100%';
-  overlay.style.background='black';
-  overlay.style.opacity='0';
-  overlay.style.zIndex='300';
-  document.body.appendChild(overlay);
-  let op=0;
-  const fadeIn = setInterval(()=>{ op+=0.05; overlay.style.opacity=op; if(op>=1){ clearInterval(fadeIn); setTimeout(runMiniGame,2000); } },50);
-
-  function runMiniGame(){
-    // Mini-jeu aléatoire
-    const choix = prompt("Mini-jeu : Choisissez un chiffre entre 1 et 5");
-    alert(`Vous avez choisi : ${choix}`);
-    const fadeOut = setInterval(()=>{ op-=0.05; overlay.style.opacity=op; if(op<=0){ clearInterval(fadeOut); document.body.removeChild(overlay); startStory(); } },50);
-  }
+// ===== Heure batterie =====
+function updateTime(){
+  const date=new Date();
+  const timeStr=date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0');
+  document.getElementById('time').textContent=timeStr;
+  document.getElementById('time-bureau').textContent=timeStr;
+  document.getElementById('time-ordi').textContent=timeStr;
 }
-
-// ===== COLLECT INDICES =====
-function collectSymbol(sym){alert(`🔎 Symbole ${sym} trouvé !`);}
-function collectFile(){alert("📂 Fichier PC trouvé !");}
+setInterval(updateTime,60000);
+updateTime();
 </script>
+</body>
+</html>
+const jours = {
+  1: [
+    "Bienvenue dans Blackwater…",
+    "Votre enquête commence maintenant.",
+    "Vous recevez un message inconnu :",
+    "Evan Cross : 'Ils nous observent depuis toujours…'",
+    "Cherchez les premiers indices dans votre téléphone.",
+    "Mini-jeu à venir toutes les 10 informations."
+  ],
+  2: [
+    "Jour 2 : vous ouvrez l’appli Photos.",
+    "Une photo étrange d’un bâtiment marqué ☿ apparaît.",
+    "Vous notez le symbole dans votre journal.",
+    "Un nouvel email arrive : 'Ne faites confiance à personne.'",
+    "Mini-jeu à venir toutes les 10 informations."
+  ],
+  3: [
+    "Jour 3 : Claire vous envoie un message.",
+    "Elle vous guide subtilement vers un dossier caché.",
+    "Sur le bureau, vous trouvez une clé USB.",
+    "Indice trouvé : fichier nommé 'BLACKWATER_TEST.pdf'.",
+    "Mini-jeu à venir toutes les 10 informations."
+  ],
+  4: [
+    "Jour 4 : le téléphone vibre, nouveau message.",
+    "Evan : 'Chaque symbole a un sujet… chacun un rôle.'",
+    "Vous consultez le journal pour vérifier les symboles.",
+    "Mini-jeu : choisissez un chiffre entre 1 et 5 pour déverrouiller un fichier.",
+    "Indice trouvé : ☿ dans le coin d’une page."
+  ],
+  5: [
+    "Jour 5 : photo d’archive reçue.",
+    "Un visage que vous reconnaissez à peine apparaît.",
+    "Vous notez des annotations au dos : 🜍",
+    "Mini-jeu : trouvez l’intrus parmi les fichiers affichés.",
+    "Indice ajouté à votre collection."
+  ],
+  6: [
+    "Jour 6 : un email mystérieux vous envoie vers le bureau.",
+    "Vous trouvez un carnet avec des pages arrachées.",
+    "Mini-jeu : reconstituez le symbole manquant.",
+    "Vous obtenez le symbole ☿ complet."
+  ],
+  7: [
+    "Jour 7 : Evan vous envoie un audio.",
+    "Transcription : 'Ils disent que c’est juste des rêves…'",
+    "Vous ajoutez cette information à votre journal.",
+    "Mini-jeu : tapez la bonne séquence de chiffres entendue dans l’audio."
+  ],
+  8: [
+    "Jour 8 : nouveau post sur le faux réseau social.",
+    "Post contenant des indices cachés dans les métadonnées.",
+    "Mini-jeu : trouvez la date correcte à partir des indices.",
+    "Indice ajouté : date d’un événement important."
+  ],
+  9: [
+    "Jour 9 : Claire vous envoie une image avec un symbole partiel.",
+    "Vous devez compléter le symbole dans votre journal.",
+    "Mini-jeu : puzzle du symbole à reconstruire.",
+    "Indice ajouté à votre collection."
+  ],
+  10: [
+    "Jour 10 : premier vrai test de mémoire.",
+    "Evan : 'Rappelez-vous ce que vous avez vu la première nuit.'",
+    "Mini-jeu : choisissez la bonne séquence de symboles.",
+    "Toutes les informations collectées aujourd’hui sont validées."
+  ],
+  11: [
+    "Jour 11 : photo de groupe d’archive reçue.",
+    "Sur le coin, un symbole 🜍 apparaît presque invisible.",
+    "Mini-jeu : trouvez tous les symboles cachés dans la photo.",
+    "Indice ajouté."
+  ],
+  12: [
+    "Jour 12 : un dossier crypté apparaît sur votre ordinateur.",
+    "Mini-jeu : résolvez un petit code pour ouvrir le fichier.",
+    "Contenu du dossier : noms rayés et symboles.",
+    "Nouvelle information ajoutée à votre journal."
+  ],
+  13: [
+    "Jour 13 : messages étranges sur le téléphone.",
+    "Evan vous dit : 'Ne laissez personne savoir ce que vous trouvez.'",
+    "Mini-jeu : associez chaque symbole à la bonne catégorie de sujet.",
+    "Indice ajouté."
+  ],
+  14: [
+    "Jour 14 : photo d’un objet inconnu chez vous.",
+    "Symbole ☿ gravé dessus.",
+    "Mini-jeu : identifiez les différences entre deux images.",
+    "Indice ajouté."
+  ],
+  15: [
+    "Jour 15 : email d’un numéro inconnu.",
+    "Message : 'Ils savent que vous cherchez…'",
+    "Mini-jeu : choisissez le bon mot-clé pour avancer.",
+    "Indice ajouté."
+  ],
+  16: [
+    "Jour 16 : carnet trouvé sur le bureau.",
+    "Page avec des symboles répétés ☿ ☿ ☿",
+    "Mini-jeu : reproduisez le motif dans le bon ordre.",
+    "Indice ajouté."
+  ],
+  17: [
+    "Jour 17 : Evan envoie un message vocal.",
+    "Transcription : 'Si vous voyez un symbole, suivez son sujet…'",
+    "Mini-jeu : tapez les chiffres entendus correctement.",
+    "Indice ajouté."
+  ],
+  18: [
+    "Jour 18 : nouveau post sur le faux réseau social.",
+    "Indices cachés dans les commentaires.",
+    "Mini-jeu : trouvez la bonne combinaison de commentaires.",
+    "Indice ajouté."
+  ],
+  19: [
+    "Jour 19 : Claire envoie un document PDF crypté.",
+    "Mini-jeu : déchiffrez le mot de passe à partir des indices.",
+    "Indice ajouté."
+  ],
+  20: [
+    "Jour 20 : photo d’archive montrant un ancien bâtiment.",
+    "Symbole 🜔 sur un coin presque invisible.",
+    "Mini-jeu : associez le symbole au bon sujet.",
+    "Indice ajouté."
+  ],
+  21: [
+    "Jour 21 : nouvel email reçu.",
+    "Message : 'Chaque choix compte.'",
+    "Mini-jeu : choisissez la bonne option pour avancer.",
+    "Indice ajouté."
+  ],
+  22: [
+    "Jour 22 : photo trouvée sur le bureau.",
+    "Indices dans le fond de l’image.",
+    "Mini-jeu : puzzle de la photo à reconstituer.",
+    "Indice ajouté."
+  ],
+  23: [
+    "Jour 23 : message vocal d’Evan.",
+    "Transcription : 'Ils surveillent vos mouvements.'",
+    "Mini-jeu : tapez correctement la séquence de symboles entendue.",
+    "Indice ajouté."
+  ],
+  24: [
+    "Jour 24 : dossier classé trouvé sur l’ordinateur.",
+    "Symbole ☿ dans le coin d’une page.",
+    "Mini-jeu : associez chaque fichier à son symbole.",
+    "Indice ajouté."
+  ],
+  25: [
+    "Jour 25 : journée de révélation partielle.",
+    "Tous les indices collectés apparaissent dans le journal.",
+    "Mini-jeu final du bloc : puzzle combinant tous les symboles collectés.",
+    "Toutes les informations validées. Préparez-vous pour les prochains jours."
+  ]
+};
+// ===== Jours 26 → 50 =====
+Object.assign(jours, {
+  26: [
+    "Jour 26 : nouveau message d’Evan.",
+    "'Le système est plus vaste que prévu…'",
+    "Mini-jeu : devinez le symbole correct parmi plusieurs options.",
+    "Indice ajouté."
+  ],
+  27: [
+    "Jour 27 : photo sur le bureau montrant un carnet ouvert.",
+    "Symbole ☿ gravé discrètement.",
+    "Mini-jeu : reconstituez le symbole dans le bon ordre.",
+    "Indice ajouté."
+  ],
+  28: [
+    "Jour 28 : email anonyme reçu.",
+    "Message : 'Les tests reprennent.'",
+    "Mini-jeu : tapez la séquence numérique cachée dans le message.",
+    "Indice ajouté."
+  ],
+  29: [
+    "Jour 29 : post sur le faux réseau social.",
+    "Indices cachés dans les métadonnées des images.",
+    "Mini-jeu : trouvez la date et l’heure exacte.",
+    "Indice ajouté."
+  ],
+  30: [
+    "Jour 30 : journée d’archives.",
+    "Vous trouvez des dossiers marqués 🜍 et ☿.",
+    "Mini-jeu : associez chaque symbole à son sujet.",
+    "Indice ajouté."
+  ],
+  31: [
+    "Jour 31 : message vocal d’Evan.",
+    "Transcription : 'Ils savent que vous cherchez…'",
+    "Mini-jeu : mémorisez la séquence de symboles.",
+    "Indice ajouté."
+  ],
+  32: [
+    "Jour 32 : photo d’un objet inconnu chez vous.",
+    "Symbole ☿ gravé dessus.",
+    "Mini-jeu : trouvez les différences entre deux images.",
+    "Indice ajouté."
+  ],
+  33: [
+    "Jour 33 : email avec fichier PDF crypté.",
+    "Mini-jeu : trouvez le mot de passe à partir des indices collectés.",
+    "Indice ajouté."
+  ],
+  34: [
+    "Jour 34 : dossier sur le bureau.",
+    "Contient plusieurs symboles et annotations.",
+    "Mini-jeu : associez chaque symbole à la bonne catégorie de sujet.",
+    "Indice ajouté."
+  ],
+  35: [
+    "Jour 35 : photo d’archive reçue.",
+    "Visages de sujets marqués ☿ et 🜍.",
+    "Mini-jeu : identifiez les sujets éveillés.",
+    "Indice ajouté."
+  ],
+  36: [
+    "Jour 36 : message vocal d’Evan.",
+    "'Si vous voyez un symbole, suivez son sujet…'",
+    "Mini-jeu : tapez correctement la séquence entendue.",
+    "Indice ajouté."
+  ],
+  37: [
+    "Jour 37 : nouveau post sur le faux réseau social.",
+    "Indices cachés dans les commentaires et métadonnées.",
+    "Mini-jeu : trouvez la bonne combinaison de commentaires.",
+    "Indice ajouté."
+  ],
+  38: [
+    "Jour 38 : photo d’archive sur le bureau.",
+    "Symbole presque invisible dans un coin.",
+    "Mini-jeu : puzzle pour révéler le symbole complet.",
+    "Indice ajouté."
+  ],
+  39: [
+    "Jour 39 : email d’un numéro inconnu.",
+    "'Ils observent chaque mouvement.'",
+    "Mini-jeu : tapez le mot-clé correct pour avancer.",
+    "Indice ajouté."
+  ],
+  40: [
+    "Jour 40 : carnet trouvé sur le bureau.",
+    "Page avec des symboles répétés ☿ ☿ ☿",
+    "Mini-jeu : reproduisez le motif exact.",
+    "Indice ajouté."
+  ],
+  41: [
+    "Jour 41 : message audio d’Evan.",
+    "'Souvenez-vous des symboles précédents…'",
+    "Mini-jeu : choisissez la bonne séquence parmi plusieurs options.",
+    "Indice ajouté."
+  ],
+  42: [
+    "Jour 42 : post sur le réseau social.",
+    "Indices cachés dans les photos et textes.",
+    "Mini-jeu : décoder le message caché.",
+    "Indice ajouté."
+  ],
+  43: [
+    "Jour 43 : dossier PDF crypté reçu.",
+    "Mini-jeu : déchiffrez le mot de passe à partir des indices précédents.",
+    "Indice ajouté."
+  ],
+  44: [
+    "Jour 44 : photo d’archive reçue.",
+    "Symbole 🜔 presque invisible.",
+    "Mini-jeu : associez le symbole au bon sujet.",
+    "Indice ajouté."
+  ],
+  45: [
+    "Jour 45 : nouveau message vocal d’Evan.",
+    "'Chaque choix influence le résultat…'",
+    "Mini-jeu : mémorisez et reproduisez la séquence de symboles.",
+    "Indice ajouté."
+  ],
+  46: [
+    "Jour 46 : photo sur le bureau.",
+    "Indices cachés dans l’image.",
+    "Mini-jeu : puzzle de l’image pour révéler le symbole.",
+    "Indice ajouté."
+  ],
+  47: [
+    "Jour 47 : email anonyme reçu.",
+    "'Les tests reprennent…'",
+    "Mini-jeu : tapez la séquence correcte de chiffres et lettres.",
+    "Indice ajouté."
+  ],
+  48: [
+    "Jour 48 : photo d’un objet inconnu.",
+    "Symbole ☿ gravé dessus.",
+    "Mini-jeu : trouvez toutes les différences entre deux images.",
+    "Indice ajouté."
+  ],
+  49: [
+    "Jour 49 : dossier trouvé sur l’ordinateur.",
+    "Contient symboles et annotations.",
+    "Mini-jeu : associez chaque symbole à la bonne catégorie.",
+    "Indice ajouté."
+  ],
+  50: [
+    "Jour 50 : révélation partielle du bloc.",
+    "Tous les indices collectés apparaissent dans votre journal.",
+    "Mini-jeu final : puzzle combinant tous les symboles collectés.",
+    "Préparez-vous pour les prochains jours."
+  ]
+});
+// ===== Jours 51 → 75 =====
+Object.assign(jours, {
+  51: [
+    "Jour 51 : message inquiétant d’Evan.",
+    "'Ils ont remarqué vos progrès…'",
+    "Mini-jeu : devinez quel symbole correspond au bon sujet.",
+    "Indice ajouté."
+  ],
+  52: [
+    "Jour 52 : photo sur le bureau avec annotations.",
+    "Symbole ☿ et 🜍 visibles dans les coins.",
+    "Mini-jeu : reconstruisez le symbole correctement.",
+    "Indice ajouté."
+  ],
+  53: [
+    "Jour 53 : email anonyme reçu.",
+    "'Les tests deviennent plus stricts…'",
+    "Mini-jeu : tapez la séquence numérique cachée dans le message.",
+    "Indice ajouté."
+  ],
+  54: [
+    "Jour 54 : post sur le faux réseau social.",
+    "Indices dans les métadonnées des images.",
+    "Mini-jeu : trouvez la date exacte et l’heure de publication.",
+    "Indice ajouté."
+  ],
+  55: [
+    "Jour 55 : exploration des dossiers d’archives.",
+    "Symbole 🜔 apparaît dans un coin presque invisible.",
+    "Mini-jeu : associez le symbole à son sujet.",
+    "Indice ajouté."
+  ],
+  56: [
+    "Jour 56 : message audio d’Evan.",
+    "'Rappelez-vous tous les symboles précédents…'",
+    "Mini-jeu : reproduisez correctement la séquence de symboles.",
+    "Indice ajouté."
+  ],
+  57: [
+    "Jour 57 : photo reçue sur le téléphone.",
+    "Symboles cachés à identifier.",
+    "Mini-jeu : trouvez toutes les différences entre deux images.",
+    "Indice ajouté."
+  ],
+  58: [
+    "Jour 58 : email avec PDF crypté.",
+    "Mini-jeu : déchiffrez le mot de passe en combinant les indices précédents.",
+    "Indice ajouté."
+  ],
+  59: [
+    "Jour 59 : dossier trouvé sur l’ordinateur.",
+    "Contient plusieurs symboles et annotations.",
+    "Mini-jeu : associez chaque symbole à la bonne catégorie.",
+    "Indice ajouté."
+  ],
+  60: [
+    "Jour 60 : révélation partielle.",
+    "Tous les indices collectés apparaissent dans le journal.",
+    "Mini-jeu final du bloc : puzzle combinant tous les symboles collectés.",
+    "Préparez-vous pour les prochains jours."
+  ],
+  61: [
+    "Jour 61 : message mystérieux reçu.",
+    "'Ils suivent chacun de vos mouvements…'",
+    "Mini-jeu : tapez la séquence correcte de symboles.",
+    "Indice ajouté."
+  ],
+  62: [
+    "Jour 62 : photo sur le bureau avec symboles partiels.",
+    "Mini-jeu : reconstruisez les symboles manquants.",
+    "Indice ajouté."
+  ],
+  63: [
+    "Jour 63 : email anonyme reçu.",
+    "'Les tests deviennent plus difficiles…'",
+    "Mini-jeu : résolvez le code caché dans le message.",
+    "Indice ajouté."
+  ],
+  64: [
+    "Jour 64 : post sur le faux réseau social.",
+    "Indices cachés dans les images et commentaires.",
+    "Mini-jeu : trouvez la bonne combinaison.",
+    "Indice ajouté."
+  ],
+  65: [
+    "Jour 65 : exploration des archives sur l’ordinateur.",
+    "Symbole ☿ apparaît dans un fichier caché.",
+    "Mini-jeu : associez le symbole à son sujet.",
+    "Indice ajouté."
+  ],
+  66: [
+    "Jour 66 : message vocal d’Evan.",
+    "'Rappelez-vous tous les symboles précédents…'",
+    "Mini-jeu : reproduisez correctement la séquence entendue.",
+    "Indice ajouté."
+  ],
+  67: [
+    "Jour 67 : photo reçue sur le téléphone.",
+    "Symboles cachés à identifier.",
+    "Mini-jeu : trouvez toutes les différences entre deux images.",
+    "Indice ajouté."
+  ],
+  68: [
+    "Jour 68 : email avec PDF crypté.",
+    "Mini-jeu : déchiffrez le mot de passe en combinant les indices précédents.",
+    "Indice ajouté."
+  ],
+  69: [
+    "Jour 69 : dossier trouvé sur l’ordinateur.",
+    "Contient plusieurs symboles et annotations.",
+    "Mini-jeu : associez chaque symbole à la bonne catégorie.",
+    "Indice ajouté."
+  ],
+  70: [
+    "Jour 70 : révélation partielle.",
+    "Tous les indices collectés apparaissent dans le journal.",
+    "Mini-jeu final du bloc : puzzle combinant tous les symboles collectés.",
+    "Préparez-vous pour les prochains jours."
+  ],
+  71: [
+    "Jour 71 : message d’Evan.",
+    "'Le système devient instable…'",
+    "Mini-jeu : devinez le symbole correct.",
+    "Indice ajouté."
+  ],
+  72: [
+    "Jour 72 : photo sur le bureau avec annotations.",
+    "Mini-jeu : reconstruisez le symbole correctement.",
+    "Indice ajouté."
+  ],
+  73: [
+    "Jour 73 : email anonyme reçu.",
+    "'Les tests s’intensifient…'",
+    "Mini-jeu : tapez la séquence cachée dans le message.",
+    "Indice ajouté."
+  ],
+  74: [
+    "Jour 74 : post sur le faux réseau social.",
+    "Indices dans les métadonnées des images.",
+    "Mini-jeu : trouvez la bonne date et heure de publication.",
+    "Indice ajouté."
+  ],
+  75: [
+    "Jour 75 : exploration des dossiers d’archives.",
+    "Symbole 🜔 apparaît dans un coin presque invisible.",
+    "Mini-jeu : associez le symbole à son sujet.",
+    "Indice ajouté."
+  ]
+});
+// ===== Jours 76 → 100 =====
+Object.assign(jours, {
+  76: [
+    "Jour 76 : message d’Evan.",
+    "'Le système est sur le point de s’effondrer…'",
+    "Mini-jeu : devinez le symbole correct.",
+    "Indice ajouté."
+  ],
+  77: [
+    "Jour 77 : photo sur le bureau avec annotations.",
+    "Mini-jeu : reconstruisez le symbole correctement.",
+    "Indice ajouté."
+  ],
+  78: [
+    "Jour 78 : email anonyme reçu.",
+    "'Ils observent chaque mouvement.'",
+    "Mini-jeu : tapez la séquence correcte.",
+    "Indice ajouté."
+  ],
+  79: [
+    "Jour 79 : post sur le faux réseau social.",
+    "Indices cachés dans les images et commentaires.",
+    "Mini-jeu : trouvez la bonne combinaison.",
+    "Indice ajouté."
+  ],
+  80: [
+    "Jour 80 : exploration des archives sur l’ordinateur.",
+    "Symbole ☿ apparaît dans un fichier caché.",
+    "Mini-jeu : associez le symbole à son sujet.",
+    "Indice ajouté."
+  ],
+  81: [
+    "Jour 81 : message vocal d’Evan.",
+    "'Souvenez-vous de tous les symboles…'",
+    "Mini-jeu : reproduisez correctement la séquence.",
+    "Indice ajouté."
+  ],
+  82: [
+    "Jour 82 : photo reçue sur le téléphone.",
+    "Symboles cachés à identifier.",
+    "Mini-jeu : trouvez toutes les différences entre deux images.",
+    "Indice ajouté."
+  ],
+  83: [
+    "Jour 83 : email avec PDF crypté.",
+    "Mini-jeu : déchiffrez le mot de passe avec les indices précédents.",
+    "Indice ajouté."
+  ],
+  84: [
+    "Jour 84 : dossier trouvé sur l’ordinateur.",
+    "Contient plusieurs symboles et annotations.",
+    "Mini-jeu : associez chaque symbole à la bonne catégorie.",
+    "Indice ajouté."
+  ],
+  85: [
+    "Jour 85 : révélation partielle.",
+    "Tous les indices collectés apparaissent dans votre journal.",
+    "Mini-jeu final du bloc : puzzle combinant tous les symboles collectés.",
+    "Préparez-vous pour les révélations finales."
+  ],
+  86: [
+    "Jour 86 : Evan envoie un message crucial.",
+    "'Vous êtes au cœur du système…'",
+    "Mini-jeu : tapez correctement la séquence finale.",
+    "Indice ajouté."
+  ],
+  87: [
+    "Jour 87 : photo sur le bureau avec symbole rare.",
+    "Mini-jeu : reconstruisez le symbole complexe.",
+    "Indice ajouté."
+  ],
+  88: [
+    "Jour 88 : email anonyme.",
+    "'Les tests finaux approchent…'",
+    "Mini-jeu : code de sécurité à résoudre.",
+    "Indice ajouté."
+  ],
+  89: [
+    "Jour 89 : post sur le faux réseau social.",
+    "Indices cachés révélant un twist majeur.",
+    "Mini-jeu : trouvez la combinaison correcte.",
+    "Indice ajouté."
+  ],
+  90: [
+    "Jour 90 : exploration finale des archives.",
+    "Symbole ☿ apparaît sur tous les fichiers critiques.",
+    "Mini-jeu : associez tous les symboles correctement.",
+    "Indice ajouté."
+  ],
+  91: [
+    "Jour 91 : message vocal d’Evan.",
+    "'Vous pouvez changer l’issue…'",
+    "Mini-jeu : reproduisez la séquence exacte des symboles.",
+    "Indice ajouté."
+  ],
+  92: [
+    "Jour 92 : photo reçue sur le téléphone.",
+    "Indices combinés de tous les jours précédents.",
+    "Mini-jeu : puzzle final de tous les symboles collectés.",
+    "Indice ajouté."
+  ],
+  93: [
+    "Jour 93 : email crypté.",
+    "Mini-jeu : déchiffrez le dernier code.",
+    "Indice ajouté."
+  ],
+  94: [
+    "Jour 94 : dernier dossier trouvé sur l’ordinateur.",
+    "Contient tous les symboles et annotations finales.",
+    "Mini-jeu : associez tous les symboles correctement.",
+    "Indice ajouté."
+  ],
+  95: [
+    "Jour 95 : message final d’Evan.",
+    "'Votre choix déterminera votre fin…'",
+    "Mini-jeu : choisissez la bonne séquence pour débloquer la fin.",
+    "Indice ajouté."
+  ],
+  96: [
+    "Jour 96 : préparation des 3 fins.",
+    "Options : Fin heureuse, Fin révélatrice, Fin mauvaise.",
+    "Mini-jeu final : puzzle combinant tous les éléments.",
+    "Indice ajouté."
+  ],
+  97: [
+    "Jour 97 : révélation partielle de la vérité.",
+    "Tous les symboles et indices sont regroupés.",
+    "Mini-jeu : dernier test de mémoire et logique.",
+    "Indice ajouté."
+  ],
+  98: [
+    "Jour 98 : Evan vous guide vers la conclusion.",
+    "Mini-jeu : associez correctement tous les indices à leur sujet.",
+    "Indice ajouté."
+  ],
+  99: [
+    "Jour 99 : message d’avertissement.",
+    "'Dernière chance avant la fin…'",
+    "Mini-jeu : choisissez la bonne séquence finale.",
+    "Indice ajouté."
+  ],
+  100: [
+    "Jour 100 : finale.",
+    "Toutes vos actions déterminent votre fin.",
+    "Si vous avez bien collecté les indices et résolu les mini-jeux :",
+    "- Fin heureuse : vous découvrez la vérité et sauvez les sujets éveillés.",
+    "- Fin révélatrice : vous découvrez tout, mais à un coût.",
+    "- Fin mauvaise : le système reste intact, vous êtes observé.",
+    "Merci d’avoir joué à Blackwater Files."
+  ]
+});
