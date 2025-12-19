@@ -1,171 +1,237 @@
-</script>
-
-</body>
-</html>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jeu interactif iPhone</title>
+<title>The Blackwater Files</title>
 <link rel="icon" type="image/png" href="icon.png">
 <style>
+/* ===== GLOBAL ===== */
 body { font-family:"Helvetica",sans-serif; background:#000; margin:0; display:flex; justify-content:center; height:100vh; overflow:hidden; }
 .game-container { width:375px; height:667px; background:#fff; border-radius:30px; border:1px solid #ccc; box-shadow:0 5px 15px rgba(0,0,0,0.2); overflow:hidden; position:relative; }
-.interface { width:100%; height:100%; position:absolute; top:0; left:100%; transition:left 0.5s ease; display:flex; flex-direction:column; overflow-y:auto; background:#f0f0f5; padding:10px; }
+
+/* Interfaces */
+.interface { width:100%; height:100%; position:absolute; top:0; left:100%; transition:left 0.5s ease; display:flex; flex-direction:column; overflow-y:auto; padding:0; background-size:cover; }
 .interface.active { left:0; }
-.nav-arrow { position:absolute; bottom:10px; width:40px; height:40px; opacity:0.3; font-size:30px; color:#007aff; text-align:center; line-height:40px; cursor:pointer; z-index:20; }
-.nav-arrow.left { left:10px; } .nav-arrow.right { right:10px; }
-#home-screen { display:flex; flex-wrap:wrap; justify-content:space-around; align-content:flex-start; }
-.app-icon { width:60px; height:60px; background:#007aff; border-radius:15px; margin:10px; display:flex; justify-content:center; align-items:center; color:#fff; font-size:12px; text-align:center; cursor:pointer; flex-direction:column; }
-.app-icon span { margin-top:5px; font-size:10px; }
-.app-window { position:absolute; top:0; left:0; width:100%; height:100%; background:#fff; display:none; flex-direction:column; overflow-y:auto; padding:10px; z-index:10; }
+.nav-arrow { position:absolute; bottom:10px; width:40px; height:40px; opacity:0.8; cursor:pointer; z-index:20; background-size:cover; }
+.nav-arrow.left { left:10px; }
+.nav-arrow.right { right:10px; }
+
+/* PHONE */
+#phone-interface { background:url('backgrounds/phone-bg.jpg') no-repeat center/cover; }
+#home-screen { display:flex; flex-wrap:wrap; justify-content:space-around; align-content:flex-start; padding:10px; }
+.app-icon { width:60px; height:60px; margin:10px; border-radius:15px; cursor:pointer; background-size:cover; }
+.app-window { position:absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; overflow-y:auto; padding:10px; z-index:10; border-radius:0; background-size:cover; }
 .app-window.active { display:flex; }
-.message { padding:10px 14px; border-radius:20px; max-width:80%; margin:6px 0; word-wrap:break-word; background:#e0e0ff; }
-.time { font-size:10px; color:#888; margin-bottom:2px; }
+.back-btn, .reset-btn { background:#007aff; color:#fff; border:none; padding:8px 12px; border-radius:10px; margin-bottom:10px; cursor:pointer; }
+
+/* MESSAGES */
+#chat .message { padding:10px 14px; border-radius:20px; max-width:80%; margin:6px 0; word-wrap:break-word; background:#e0e0ff; opacity:0; transition: opacity 0.5s ease; }
 .post { background:#f0f0f0; padding:8px 12px; border-radius:10px; margin:8px 0; }
-.back-btn, .settings-btn, .reset-btn { background:#007aff; color:#fff; border:none; padding:8px 12px; border-radius:10px; margin-bottom:10px; cursor:pointer; }
-.bureau, .ordinateur { display:flex; flex-direction:column; padding:10px; }
-.photo { margin:8px 0; }
-.indice { background:#fffae6; padding:8px; border-radius:10px; margin:5px 0; }
-.ordi-content { background:#f0f0f0; padding:10px; border-radius:10px; flex:1; overflow-y:auto; }
-.mini-game { background:#ffdddd; padding:10px; border-radius:10px; margin:10px 0; }
+
+/* BUREAU */
+#bureau-interface { background:url('backgrounds/bureau-bg.jpg') no-repeat center/cover; }
+.bureau { display:flex; flex-wrap:wrap; justify-content:flex-start; padding:15px; }
+.photo { width:100px; height:100px; margin:10px; border:2px solid #ccc; border-radius:8px; cursor:pointer; }
+
+/* ORDINATEUR */
+#ordi-interface { background:url('backgrounds/ordi-bg.jpg') no-repeat center/cover; }
+.ordinateur { background: rgba(240,240,240,0.9); border-radius:15px; padding:10px; flex:1; overflow-y:auto; }
+.window { background:#fff; border:2px solid #666; padding:10px; border-radius:10px; margin:8px 0; cursor:pointer; }
+
+/* ICONS */
+.app-icon[data-app="messenger"] { background-image:url('icons/messenger.png'); }
+.app-icon[data-app="instafaux"] { background-image:url('icons/instafaux.png'); }
+.app-icon[data-app="twitfake"] { background-image:url('icons/twitfake.png'); }
+.app-icon[data-app="web"] { background-image:url('icons/web.png'); }
+.app-icon[data-app="notes"] { background-image:url('icons/notes.png'); }
+.app-icon[data-app="mailfaux"] { background-image:url('icons/mail.png'); }
+.app-icon[data-app="calendar"] { background-image:url('icons/calendar.png'); }
+.app-icon[data-app="photos"] { background-image:url('icons/photos.png'); }
+.app-icon[data-app="mapsfake"] { background-image:url('icons/maps.png'); }
+.app-icon[data-app="contacts"] { background-image:url('icons/contacts.png'); }
+.app-icon[data-app="todo"] { background-image:url('icons/todo.png'); }
+.app-icon[data-app="appstorefake"] { background-image:url('icons/appstore.png'); }
+.app-icon[data-app="settings"] { background-image:url('icons/settings.png'); }
+
+/* FLÈCHES */
+.nav-arrow.left { background-image:url('icons/left-arrow.png'); }
+.nav-arrow.right { background-image:url('icons/right-arrow.png'); }
+
+/* TRANSITIONS */
+#day-transition, #mini-game-screen, #intro-screen { transition:opacity 1s; }
+
+/* ANIMATIONS */
+.app-icon:hover { transform:scale(1.1); transition:transform 0.2s ease; }
 </style>
 </head>
 <body>
 
 <div class="game-container">
 
-  <!-- Flèches navigation -->
-  <div class="nav-arrow left">⬅️</div>
-  <div class="nav-arrow right">➡️</div>
+<!-- Écran intro -->
+<div id="intro-screen">
+  <h1>The Blackwater Files</h1>
+  <p>Tu es sur le point d’entrer dans l’enquête de Blackwater.</p>
+  <p>Objectif : Collecter les indices et comprendre la vérité.</p>
+  <p>Il existe 3 fins possibles :</p>
+  <ul>
+    <li>Fin Réveil 🕊️</li>
+    <li>Fin Vérité Totale 🔥</li>
+    <li>Fin Silence 🕳️</li>
+  </ul>
+  <button id="start-game-btn">Iniziate</button>
+</div>
 
-  <!-- Interface téléphone -->
-  <div class="interface active" id="phone-interface">
-    <div id="home-screen">
-      <div class="app-icon" data-app="messenger">💬<span>Chat</span></div>
-      <div class="app-icon" data-app="instafaux">📸<span>InstaFaux</span></div>
-      <div class="app-icon" data-app="twitfake">🐦<span>TwitFake</span></div>
-      <div class="app-icon" data-app="web">🌐<span>Web</span></div>
-      <div class="app-icon" data-app="notes">📝<span>Notes</span></div>
-      <div class="app-icon" data-app="mailfaux">✉️<span>MailFaux</span></div>
-      <div class="app-icon" data-app="calendar">📅<span>Calendar</span></div>
-      <div class="app-icon" data-app="photos">🖼️<span>Photos</span></div>
-      <div class="app-icon" data-app="mapsfake">🗺️<span>MapsFake</span></div>
-      <div class="app-icon" data-app="contacts">👤<span>Contacts</span></div>
-      <div class="app-icon" data-app="todo">✅<span>ToDo</span></div>
-      <div class="app-icon" data-app="appstorefake">🛍️<span>AppStore</span></div>
-      <div class="app-icon" data-app="settings">⚙️<span>Settings</span></div>
-    </div>
+<!-- Transitions -->
+<div id="day-transition"></div>
+<div id="mini-game-screen"></div>
 
-    <!-- Apps -->
-    <div class="app-window" id="messenger"><button class="back-btn">🏠 Accueil</button><div id="chat"></div></div>
-    <div class="app-window" id="instafaux"><button class="back-btn">🏠 Accueil</button><div id="insta-content"></div></div>
-    <div class="app-window" id="twitfake"><button class="back-btn">🏠 Accueil</button><div id="twit-content"></div></div>
-    <div class="app-window" id="web"><button class="back-btn">🏠 Accueil</button><div id="web-content"></div></div>
-    <div class="app-window" id="notes"><button class="back-btn">🏠 Accueil</button><div id="notes-content"></div></div>
-    <div class="app-window" id="mailfaux"><button class="back-btn">🏠 Accueil</button><div id="mail-content"></div></div>
-    <div class="app-window" id="calendar"><button class="back-btn">🏠 Accueil</button><div id="calendar-content"></div></div>
-    <div class="app-window" id="photos"><button class="back-btn">🏠 Accueil</button><div id="photos-content"></div></div>
-    <div class="app-window" id="mapsfake"><button class="back-btn">🏠 Accueil</button><div id="maps-content"></div></div>
-    <div class="app-window" id="contacts"><button class="back-btn">🏠 Accueil</button><div id="contacts-content"></div></div>
-    <div class="app-window" id="todo"><button class="back-btn">🏠 Accueil</button><div id="todo-content"></div></div>
-    <div class="app-window" id="appstorefake"><button class="back-btn">🏠 Accueil</button><div id="appstore-content"></div></div>
-    <div class="app-window" id="settings"><button class="back-btn">🏠 Accueil</button><button class="reset-btn">🔄 Recommencer le jeu</button></div>
+<!-- Flèches -->
+<div class="nav-arrow left"></div>
+<div class="nav-arrow right"></div>
+
+<!-- PHONE -->
+<div class="interface active" id="phone-interface">
+  <div id="home-screen">
+    <div class="app-icon" data-app="messenger"></div>
+    <div class="app-icon" data-app="instafaux"></div>
+    <div class="app-icon" data-app="twitfake"></div>
+    <div class="app-icon" data-app="web"></div>
+    <div class="app-icon" data-app="notes"></div>
+    <div class="app-icon" data-app="mailfaux"></div>
+    <div class="app-icon" data-app="calendar"></div>
+    <div class="app-icon" data-app="photos"></div>
+    <div class="app-icon" data-app="mapsfake"></div>
+    <div class="app-icon" data-app="contacts"></div>
+    <div class="app-icon" data-app="todo"></div>
+    <div class="app-icon" data-app="appstorefake"></div>
+    <div class="app-icon" data-app="settings"></div>
   </div>
 
-  <!-- Bureau d'ado -->
-  <div class="interface" id="bureau-interface">
-    <div class="bureau">
-      <h3>Bureau d'ado</h3>
-      <div class="photo">📸 Photo de la chambre</div>
-      <div class="photo">📝 Note sur le bureau</div>
-      <div class="photo">🔑 Objet caché</div>
-    </div>
-  </div>
+  <!-- Apps -->
+  <div class="app-window" id="messenger"><button class="back-btn">🏠 Accueil</button><div id="chat"></div></div>
+  <div class="app-window" id="instafaux"><button class="back-btn">🏠 Accueil</button><div id="insta-content"></div></div>
+  <div class="app-window" id="twitfake"><button class="back-btn">🏠 Accueil</button><div id="twit-content"></div></div>
+  <div class="app-window" id="web"><button class="back-btn">🏠 Accueil</button><div id="web-content"></div></div>
+  <div class="app-window" id="notes"><button class="back-btn">🏠 Accueil</button><div id="notes-content"></div></div>
+  <div class="app-window" id="mailfaux"><button class="back-btn">🏠 Accueil</button><div id="mail-content"></div></div>
+  <div class="app-window" id="calendar"><button class="back-btn">🏠 Accueil</button><div id="calendar-content"></div></div>
+  <div class="app-window" id="photos"><button class="back-btn">🏠 Accueil</button><div id="photos-content"></div></div>
+  <div class="app-window" id="mapsfake"><button class="back-btn">🏠 Accueil</button><div id="maps-content"></div></div>
+  <div class="app-window" id="contacts"><button class="back-btn">🏠 Accueil</button><div id="contacts-content"></div></div>
+  <div class="app-window" id="todo"><button class="back-btn">🏠 Accueil</button><div id="todo-content"></div></div>
+  <div class="app-window" id="appstorefake"><button class="back-btn">🏠 Accueil</button><div id="appstore-content"></div></div>
+  <div class="app-window" id="settings"><button class="back-btn">🏠 Accueil</button><button class="reset-btn">🔄 Recommencer le jeu</button></div>
+</div>
 
-  <!-- Ordinateur -->
-  <div class="interface" id="ordi-interface">
-    <div class="ordinateur">
-      <h3>Ordinateur</h3>
-      <div class="ordi-content" id="ordi-content">Tape tes recherches ici…</div>
+<!-- BUREAU -->
+<div class="interface" id="bureau-interface">
+  <div class="bureau">
+    <h3 style="color:#fff;">Bureau d'ado</h3>
+    <div class="photo" onclick="collectFile(); alert('Indice trouvé !')"><img src="bureau/photo1.jpg" style="width:100px;"></div>
+    <div class="photo" onclick="collectSymbol('☿')"><img src="bureau/note1.jpg" style="width:100px;"></div>
+    <div class="photo" onclick="collectSymbol('🜍')"><img src="bureau/objet1.png" style="width:100px;"></div>
+  </div>
+</div>
+
+<!-- ORDI -->
+<div class="interface" id="ordi-interface">
+  <div class="ordinateur">
+    <h3>Ordinateur</h3>
+    <div class="ordi-content" id="ordi-content">
+      <div class="window" onclick="collectFile(); alert('Fichier ouvert !')">
+        <h4>Dossier adoption</h4>
+        <p>Contenu du fichier Blackwater…</p>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Musique de fond -->
+</div>
+
 <audio id="bg-music" loop autoplay>
   <source src="calme.mp3" type="audio/mp3">
 </audio>
 
 <script>
-// Navigation interfaces
-let interfaces=['phone-interface','bureau-interface','ordi-interface'];
-let currentInterface=0;
+// ===== NAVIGATION =====
+let interfaces=['phone-interface','bureau-interface','ordi-interface'], currentInterface=0;
 function showInterface(index){interfaces.forEach((id,i)=>{document.getElementById(id).classList.remove('active');if(i===index) document.getElementById(id).classList.add('active');});}
 document.querySelector('.nav-arrow.left').addEventListener('click',()=>{currentInterface=(currentInterface-1+interfaces.length)%interfaces.length;showInterface(currentInterface);});
 document.querySelector('.nav-arrow.right').addEventListener('click',()=>{currentInterface=(currentInterface+1)%interfaces.length;showInterface(currentInterface);});
 
-// Ouvrir applis
-document.querySelectorAll('.app-icon').forEach(icon=>{icon.addEventListener('click',()=>{const appId=icon.dataset.app;document.getElementById(appId).classList.add('active');document.getElementById('home-screen').style.opacity='0';});});
-// Retour accueil
-document.querySelectorAll('.back-btn').forEach(btn=>{btn.addEventListener('click',()=>{btn.parentElement.classList.remove('active');document.getElementById('home-screen').style.opacity='1';});});
+// ===== START GAME =====
+document.getElementById('start-game-btn').addEventListener('click',()=>{
+  document.getElementById('intro-screen').style.opacity=0;
+  setTimeout(()=>{document.getElementById('intro-screen').style.display='none'; fadeInInterface('phone-interface'); startStory();},1000);
+});
 
-// Reset jeu
+function fadeInInterface(id){document.getElementById(id).classList.add('active');}
+
+// ===== OPEN APPS =====
+document.querySelectorAll('.app-icon').forEach(icon=>{icon.addEventListener('click',()=>{const appId=icon.dataset.app;document.getElementById(appId).classList.add('active');document.getElementById('home-screen').style.opacity='0';});});
+document.querySelectorAll('.back-btn').forEach(btn=>{btn.addEventListener('click',()=>{btn.parentElement.classList.remove('active');document.getElementById('home-screen').style.opacity='1';});});
 document.querySelector('.reset-btn').addEventListener('click',()=>{if(confirm("Voulez-vous recommencer le jeu ?")) location.reload();});
 
-// Gestion info et jours
-let infoCount=0, day=1;
+// ===== STORY =====
+let infoCount=0, day=1, storyIndex=0, symbolFound=0, pcFilesFound=0, gameEnded=false;
 const chat=document.getElementById('chat'), bgMusic=document.getElementById('bg-music');
-const storyInfos=[
-"Bienvenue dans Elmwood. Tu es Alex, un adolescent curieux.",
-"Ton ami Léo t’a laissé un message étrange hier soir.",
-"Une rumeur court sur une maison abandonnée en ville...",
-"Tu découvres un objet suspect sur ton bureau.",
-"Le professeur mystérieux semble te surveiller.",
-"Un email anonyme arrive : 'Regarde sous le lit.'",
-"Dans le parc, tu trouves une photo étrange.",
-"Une notification de TwitFake indique que quelqu’un t’observe.",
-"Ton téléphone vibre : un indice caché dans Notes.",
-"Un mini-jeu apparaît pour déchiffrer un code secret."
-];
-function addInfo(index,music=null){
-  const div=document.createElement('div'); div.className='message';
-  div.textContent=storyInfos[index % storyInfos.length];
-  chat.appendChild(div); chat.scrollTop=chat.scrollHeight;
+const storyInfos=[ /* Prologue et messages ici */ "Prologue : If you’re reading this…", "📩 23:41 - Evan Cross…", "Une photo sombre…", "📩 23:43 - Evan…", "🎙️ Audio transcription…", "Respiration rapide…", "📂 Premier dossier…", "📩 00:02 - Evan…", "C’est votre maison…", "If you’re still reading… vous êtes dedans…" ];
+
+function addInfo(index){
+  const div=document.createElement('div'); div.className='message'; div.style.opacity=0; div.textContent=storyInfos[index % storyInfos.length]; chat.appendChild(div); chat.scrollTop=chat.scrollHeight;
+  let op=0; let fade=setInterval(()=>{op+=0.05; div.style.opacity=op; if(op>=1) clearInterval(fade);},30);
   infoCount++;
-  if(music){bgMusic.src=music; bgMusic.play();}
-  if(infoCount%10===0){day++; alert(`🎯 Jour ${day} ! Mini-jeu en cours…`); startMiniGame();}
+  if(infoCount%10===0){day++; showDayTransition(day); setTimeout(startMiniGame,2000);}
+  checkEnding();
 }
 
-// Mini-jeu simple
+// Affichage automatique tous les 4s
+function startStory(){setInterval(()=>{if(storyIndex<storyInfos.length) addInfo(storyIndex++);},4000);}
+
+// ===== MINI GAMES =====
+const miniGames=[ /* 100 mini-jeux différents */ {type:'number', question:'Choisis un chiffre entre 1 et 5', answer:'3'}, {type:'symbol', question:'Quel symbole est caché ?', answer:'☿'}, {type:'riddle', question:'Devine la devinette…', answer:'respiration'}, {type:'word', question:'Complète la phrase: "Blackwater ..."', answer:'est'}];
 function startMiniGame(){
-  const answer=prompt("Mini-jeu : devine le chiffre entre 1 et 5");
-  if(answer==3){alert("✅ Correct !");} else {alert("❌ Incorrect, mais tu continues le jeu.");}
+  const div=document.getElementById('mini-game-screen');
+  div.style.opacity=1;
+  const game=miniGames[Math.floor(Math.random()*miniGames.length)];
+  div.innerHTML=`<p>${game.question}</p><input id="mini-answer" type="text"><button onclick="checkMiniGame('${game.answer}')">Valider</button>`;
+}
+function checkMiniGame(correct){
+  const ans=document.getElementById('mini-answer').value.trim();
+  if(ans.toLowerCase()===correct.toLowerCase()){alert("✅ Correct !");} else {alert("❌ Incorrect, mais tu continues.");}
+  document.getElementById('mini-game-screen').style.opacity=0;
 }
 
-// Ajout infos progressives toutes les 3s
-let storyIndex=0;
-setInterval(()=>{addInfo(storyIndex++, storyIndex%20===0?'suspense.mp3':null);},3000);
+// ===== COLLECT INDICES =====
+function collectSymbol(sym){symbolFound++; alert(`🔎 Symbole ${sym} trouvé ! (${symbolFound}/20)`); checkEnding();}
+function collectFile(){pcFilesFound++; alert(`📂 Fichier PC trouvé ! (${pcFilesFound}/10)`); checkEnding();}
 
-// Remplir autres applis avec plusieurs fonctions
-document.getElementById('insta-content').innerHTML=
-`<div class="post">Photo 1 : indice dans le parc</div>
-<div class="post">Photo 2 : objet suspect trouvé</div>
-<div class="post">Photo 3 : quelqu'un surveille la maison</div>`;
-document.getElementById('twit-content').innerHTML=
-`<div class="post">Tweet 1 : "Indice laissé sur la place"</div>
-<div class="post">Tweet 2 : "Attention à la cave!"</div>`;
-document.getElementById('notes-content').innerHTML=
-`<div class="post">Note 1 : "Vérifier le tiroir secret"</div>
-<div class="post">Note 2 : "Regarder sous le lit"</div>`;
-document.getElementById('mail-content').innerHTML=
-`<div class="post">Email 1 : Message crypté reçu</div>
-<div class="post">Email 2 : Indice pour la fin mystérieuse</div>`;
-document.getElementById('calendar-content').innerHTML=
-`<div class="post">Événement 1 : Rendez-vous suspect</div>
-<div class="post">Événement 2 : Livraison étrange</div>`;
+// ===== FINS =====
+function checkEnding(){
+  if(gameEnded) return;
+  if(day>=100 || (symbolFound>=20 && pcFilesFound>=10)){
+    gameEnded=true;
+    if(symbolFound>=15 && pcFilesFound>=5){bgMusic.src='reveal.mp3'; bgMusic.play(); alert("🕊️ Fin Réveil !");}
+    else if(symbolFound>=20 && pcFilesFound>=10){bgMusic.src='truth.mp3'; bgMusic.play(); alert("🔥 Fin Vérité Totale !");}
+    else{bgMusic.src='silence.mp3'; bgMusic.play(); alert("🕳️ Fin Silence !");}
+  }
+}
+
+// ===== TRANSITION =====
+function showDayTransition(dayNumber){
+  const div=document.getElementById('day-transition');
+  div.textContent=`🎯 Jour ${dayNumber}`;
+  div.style.opacity=1;
+  setTimeout(()=>{div.style.opacity=0;},2000);
+}
+
+// ===== Contenu exemple applis =====
+document.getElementById('insta-content').innerHTML=`<div class="post"><img src="insta/photo1.jpg" style="width:100%;border-radius:10px;"><p>Photo du parc, indice derrière fontaine.</p></div><div class="post"><img src="insta/photo2.jpg" style="width:100%;border-radius:10px;"><p>Objet suspect trouvé grenier.</p></div>`;
+document.getElementById('twit-content').innerHTML=`<div class="post"><img src="twit/img1.jpg" style="width:100%;border-radius:10px;"><p>"Indice laissé sur place"</p></div>`;
+// … et ainsi pour notes, mails, calendrier, etc.
+
 </script>
-
 </body>
 </html>
