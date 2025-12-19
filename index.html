@@ -7,36 +7,53 @@
 <link rel="icon" type="image/png" href="icon.png">
 <style>
 /* ===== GLOBAL ===== */
-body { font-family:"Helvetica",sans-serif; background:#000; margin:0; display:flex; justify-content:center; height:100vh; overflow:hidden; }
-.game-container { width:375px; height:667px; background:#fff; border-radius:30px; border:1px solid #ccc; box-shadow:0 5px 15px rgba(0,0,0,0.2); overflow:hidden; position:relative; }
+html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font-family:"Helvetica",sans-serif; background:black; }
+.game-container { width:100vw; height:100vh; overflow:hidden; position:relative; }
 
-/* Interfaces */
-.interface { width:100%; height:100%; position:absolute; top:0; left:100%; transition:left 0.5s ease; display:flex; flex-direction:column; overflow-y:auto; padding:0; background-size:cover; }
-.interface.active { left:0; }
+/* INTERFACES */
+.interface { width:100%; height:100%; position:absolute; top:0; left:100%; transition:left 0.5s ease, opacity 0.5s ease; display:flex; flex-direction:column; overflow-y:auto; padding:0; background-size:cover; opacity:0; }
+.interface.active { left:0; opacity:1; }
 .nav-arrow { position:absolute; bottom:10px; width:40px; height:40px; opacity:0.8; cursor:pointer; z-index:20; background-size:cover; }
 .nav-arrow.left { left:10px; }
 .nav-arrow.right { right:10px; }
+
+/* STATUS BAR */
+#status-bar { position:absolute; top:0; left:0; width:100%; height:25px; display:flex; justify-content:space-between; align-items:center; padding:0 8px; z-index:100; background:rgba(0,0,0,0.6); }
+#status-bar #time { color:white; font-size:12px; }
+#status-icons img { display:inline-block; vertical-align:middle; }
+
+/* INTRO SCREEN */
+#intro-screen {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:black; color:white; display:flex;
+  flex-direction:column; justify-content:center; align-items:center;
+  text-align:center; opacity:1; transition:opacity 1s;
+  z-index:200;
+}
+#intro-screen h1 { font-size:28px; margin-bottom:20px; }
+#intro-screen p { font-size:16px; margin:6px 0; max-width:80%; }
+#intro-screen ul { list-style:none; padding:0; }
+#intro-screen ul li { margin:5px 0; }
 
 /* PHONE */
 #phone-interface { background:url('backgrounds/phone-bg.jpg') no-repeat center/cover; }
 #home-screen { display:flex; flex-wrap:wrap; justify-content:space-around; align-content:flex-start; padding:10px; }
 .app-icon { width:60px; height:60px; margin:10px; border-radius:15px; cursor:pointer; background-size:cover; }
-.app-window { position:absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction:column; overflow-y:auto; padding:10px; z-index:10; border-radius:0; background-size:cover; }
+.app-window { position:absolute; top:25px; left:0; width:100%; height:calc(100% - 25px); display:none; flex-direction:column; overflow-y:auto; padding:10px; z-index:10; border-radius:0; background-size:cover; text-align:center; }
 .app-window.active { display:flex; }
 .back-btn, .reset-btn { background:#007aff; color:#fff; border:none; padding:8px 12px; border-radius:10px; margin-bottom:10px; cursor:pointer; }
 
 /* MESSAGES */
-#chat .message { padding:10px 14px; border-radius:20px; max-width:80%; margin:6px 0; word-wrap:break-word; background:#e0e0ff; opacity:0; transition: opacity 0.5s ease; }
-.post { background:#f0f0f0; padding:8px 12px; border-radius:10px; margin:8px 0; }
+#chat .message { padding:10px 14px; border-radius:20px; max-width:80%; margin:6px auto; word-wrap:break-word; background:#e0e0ff; opacity:0; transition: opacity 0.5s ease; text-align:center; }
 
 /* BUREAU */
 #bureau-interface { background:url('backgrounds/bureau-bg.jpg') no-repeat center/cover; }
-.bureau { display:flex; flex-wrap:wrap; justify-content:flex-start; padding:15px; }
+.bureau { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; padding:15px; }
 .photo { width:100px; height:100px; margin:10px; border:2px solid #ccc; border-radius:8px; cursor:pointer; }
 
 /* ORDINATEUR */
 #ordi-interface { background:url('backgrounds/ordi-bg.jpg') no-repeat center/cover; }
-.ordinateur { background: rgba(240,240,240,0.9); border-radius:15px; padding:10px; flex:1; overflow-y:auto; }
+.ordinateur { background: rgba(240,240,240,0.9); border-radius:15px; padding:10px; flex:1; overflow-y:auto; text-align:center; }
 .window { background:#fff; border:2px solid #666; padding:10px; border-radius:10px; margin:8px 0; cursor:pointer; }
 
 /* ICONS */
@@ -59,10 +76,12 @@ body { font-family:"Helvetica",sans-serif; background:#000; margin:0; display:fl
 .nav-arrow.right { background-image:url('icons/right-arrow.png'); }
 
 /* TRANSITIONS */
-#day-transition, #mini-game-screen, #intro-screen { transition:opacity 1s; }
+#day-transition, #mini-game-screen { transition:opacity 1s; }
 
 /* ANIMATIONS */
 .app-icon:hover { transform:scale(1.1); transition:transform 0.2s ease; }
+@keyframes intro-fade { 0% {opacity:0; transform:scale(0.9);} 100% {opacity:1; transform:scale(1);} }
+.intro-animate { animation:intro-fade 1s ease forwards; }
 </style>
 </head>
 <body>
@@ -70,7 +89,7 @@ body { font-family:"Helvetica",sans-serif; background:#000; margin:0; display:fl
 <div class="game-container">
 
 <!-- Écran intro -->
-<div id="intro-screen">
+<div id="intro-screen" class="intro-animate">
   <h1>The Blackwater Files</h1>
   <p>Tu es sur le point d’entrer dans l’enquête de Blackwater.</p>
   <p>Objectif : Collecter les indices et comprendre la vérité.</p>
@@ -93,6 +112,16 @@ body { font-family:"Helvetica",sans-serif; background:#000; margin:0; display:fl
 
 <!-- PHONE -->
 <div class="interface active" id="phone-interface">
+  <!-- Status Bar -->
+  <div id="status-bar">
+    <div id="time">12:00</div>
+    <div id="status-icons">
+      <img id="signal-icon" src="icons/signal.png">
+      <img id="wifi-icon" src="icons/wifi.png">
+      <img id="battery-icon" src="icons/battery-full.png">
+    </div>
+  </div>
+
   <div id="home-screen">
     <div class="app-icon" data-app="messenger"></div>
     <div class="app-icon" data-app="instafaux"></div>
@@ -163,75 +192,87 @@ document.querySelector('.nav-arrow.right').addEventListener('click',()=>{current
 
 // ===== START GAME =====
 document.getElementById('start-game-btn').addEventListener('click',()=>{
-  document.getElementById('intro-screen').style.opacity=0;
-  setTimeout(()=>{document.getElementById('intro-screen').style.display='none'; fadeInInterface('phone-interface'); startStory();},1000);
+  const intro = document.getElementById('intro-screen');
+  intro.style.transition = 'opacity 1s';
+  intro.style.opacity=0;
+  setTimeout(()=>{
+    intro.style.display='none';
+    const phone = document.getElementById('phone-interface');
+    phone.style.left='0';
+    phone.style.opacity=1;
+    startStory();
+  },1000);
 });
 
-function fadeInInterface(id){document.getElementById(id).classList.add('active');}
+// ===== HEURE =====
+function updateTime(){
+  const now=new Date();
+  let hours=now.getHours().toString().padStart(2,'0');
+  let mins=now.getMinutes().toString().padStart(2,'0');
+  document.getElementById('time').textContent=`${hours}:${mins}`;
+}
+setInterval(updateTime,60000);
+updateTime();
+
+// ===== BATTERIE =====
+if(navigator.getBattery){
+  navigator.getBattery().then(function(battery){
+    function updateBattery(){
+      const level=Math.floor(battery.level*100);
+      document.getElementById('battery-icon').src=level>50?'icons/battery-full.png':(level>20?'icons/battery-medium.png':'icons/battery-low.png');
+    }
+    updateBattery();
+    battery.addEventListener('levelchange',updateBattery);
+  });
+}
 
 // ===== OPEN APPS =====
-document.querySelectorAll('.app-icon').forEach(icon=>{icon.addEventListener('click',()=>{const appId=icon.dataset.app;document.getElementById(appId).classList.add('active');document.getElementById('home-screen').style.opacity='0';});});
-document.querySelectorAll('.back-btn').forEach(btn=>{btn.addEventListener('click',()=>{btn.parentElement.classList.remove('active');document.getElementById('home-screen').style.opacity='1';});});
+document.querySelectorAll('.app-icon').forEach(icon=>{
+  icon.addEventListener('click',()=>{
+    const appId=icon.dataset.app;
+    document.getElementById(appId).classList.add('active');
+    document.getElementById('home-screen').style.opacity='0';
+  });
+});
+document.querySelectorAll('.back-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    btn.parentElement.classList.remove('active');
+    document.getElementById('home-screen').style.opacity='1';
+  });
+});
 document.querySelector('.reset-btn').addEventListener('click',()=>{if(confirm("Voulez-vous recommencer le jeu ?")) location.reload();});
 
 // ===== STORY =====
 let infoCount=0, day=1, storyIndex=0, symbolFound=0, pcFilesFound=0, gameEnded=false;
 const chat=document.getElementById('chat'), bgMusic=document.getElementById('bg-music');
-const storyInfos=[ /* Prologue et messages ici */ "Prologue : If you’re reading this…", "📩 23:41 - Evan Cross…", "Une photo sombre…", "📩 23:43 - Evan…", "🎙️ Audio transcription…", "Respiration rapide…", "📂 Premier dossier…", "📩 00:02 - Evan…", "C’est votre maison…", "If you’re still reading… vous êtes dedans…" ];
+const storyInfos=[ "Prologue : If you’re reading this…", "📩 23:41 - Evan Cross…", "Une photo sombre…", "📩 23:43 - Evan…", "🎙️ Audio transcription…", "Respiration rapide…", "📂 Premier dossier…", "📩 00:02 - Evan…", "C’est votre maison…", "If you’re still reading… vous êtes dedans…" ];
 
-function addInfo(index){
-  const div=document.createElement('div'); div.className='message'; div.style.opacity=0; div.textContent=storyInfos[index % storyInfos.length]; chat.appendChild(div); chat.scrollTop=chat.scrollHeight;
-  let op=0; let fade=setInterval(()=>{op+=0.05; div.style.opacity=op; if(op>=1) clearInterval(fade);},30);
+function addMessage(text){
+  const div = document.createElement('div');
+  div.className='message';
+  div.style.opacity=0;
+  div.textContent=text;
+  chat.appendChild(div);
+  let op=0;
+  const fade = setInterval(()=>{
+    op+=0.05;
+    div.style.opacity=op;
+    if(op>=1) clearInterval(fade);
+  },50);
   infoCount++;
   if(infoCount%10===0){day++; showDayTransition(day); setTimeout(startMiniGame,2000);}
   checkEnding();
 }
-
-// Affichage automatique tous les 4s
-function startStory(){setInterval(()=>{if(storyIndex<storyInfos.length) addInfo(storyIndex++);},4000);}
+function startStory(){setInterval(()=>{if(storyIndex<storyInfos.length) addMessage(storyIndex++);},4000);}
 
 // ===== MINI GAMES =====
-const miniGames=[ /* 100 mini-jeux différents */ {type:'number', question:'Choisis un chiffre entre 1 et 5', answer:'3'}, {type:'symbol', question:'Quel symbole est caché ?', answer:'☿'}, {type:'riddle', question:'Devine la devinette…', answer:'respiration'}, {type:'word', question:'Complète la phrase: "Blackwater ..."', answer:'est'}];
-function startMiniGame(){
-  const div=document.getElementById('mini-game-screen');
-  div.style.opacity=1;
-  const game=miniGames[Math.floor(Math.random()*miniGames.length)];
-  div.innerHTML=`<p>${game.question}</p><input id="mini-answer" type="text"><button onclick="checkMiniGame('${game.answer}')">Valider</button>`;
-}
-function checkMiniGame(correct){
-  const ans=document.getElementById('mini-answer').value.trim();
-  if(ans.toLowerCase()===correct.toLowerCase()){alert("✅ Correct !");} else {alert("❌ Incorrect, mais tu continues.");}
-  document.getElementById('mini-game-screen').style.opacity=0;
-}
+const miniGames=[ {type:'number', question:'Choisis un chiffre entre 1 et 5', answer:'3'}, {type:'symbol', question:'Quel symbole est caché ?', answer:'☿'}, {type:'riddle', question:'Devine la devinette…', answer:'respiration'}, {type:'word', question:'Complète la phrase: "Blackwater ..."', answer:'est'}];
+function startMiniGame(){const div=document.getElementById('mini-game-screen'); div.style.opacity=1; const game=miniGames[Math.floor(Math.random()*miniGames.length)]; div.innerHTML=`<p>${game.question}</p><input id="mini-answer" type="text"><button onclick="checkMiniGame('${game.answer}')">Valider</button>`;}
+function checkMiniGame(correct){const ans=document.getElementById('mini-answer').value.trim(); if(ans.toLowerCase()===correct.toLowerCase()){alert("✅ Correct !");} else {alert("❌ Incorrect, mais tu continues.");} document.getElementById('mini-game-screen').style.opacity=0;}
 
 // ===== COLLECT INDICES =====
 function collectSymbol(sym){symbolFound++; alert(`🔎 Symbole ${sym} trouvé ! (${symbolFound}/20)`); checkEnding();}
 function collectFile(){pcFilesFound++; alert(`📂 Fichier PC trouvé ! (${pcFilesFound}/10)`); checkEnding();}
 
 // ===== FINS =====
-function checkEnding(){
-  if(gameEnded) return;
-  if(day>=100 || (symbolFound>=20 && pcFilesFound>=10)){
-    gameEnded=true;
-    if(symbolFound>=15 && pcFilesFound>=5){bgMusic.src='reveal.mp3'; bgMusic.play(); alert("🕊️ Fin Réveil !");}
-    else if(symbolFound>=20 && pcFilesFound>=10){bgMusic.src='truth.mp3'; bgMusic.play(); alert("🔥 Fin Vérité Totale !");}
-    else{bgMusic.src='silence.mp3'; bgMusic.play(); alert("🕳️ Fin Silence !");}
-  }
-}
-
-// ===== TRANSITION =====
-function showDayTransition(dayNumber){
-  const div=document.getElementById('day-transition');
-  div.textContent=`🎯 Jour ${dayNumber}`;
-  div.style.opacity=1;
-  setTimeout(()=>{div.style.opacity=0;},2000);
-}
-
-// ===== Contenu exemple applis =====
-document.getElementById('insta-content').innerHTML=`<div class="post"><img src="insta/photo1.jpg" style="width:100%;border-radius:10px;"><p>Photo du parc, indice derrière fontaine.</p></div><div class="post"><img src="insta/photo2.jpg" style="width:100%;border-radius:10px;"><p>Objet suspect trouvé grenier.</p></div>`;
-document.getElementById('twit-content').innerHTML=`<div class="post"><img src="twit/img1.jpg" style="width:100%;border-radius:10px;"><p>"Indice laissé sur place"</p></div>`;
-// … et ainsi pour notes, mails, calendrier, etc.
-
-</script>
-</body>
-</html>
+function checkEnding(){if(gameEnded) return; if(day>=100 || (symbolFound>=20 && pcFilesFound>=10)){gameEnded=true; if(symbolFound>=15 && pcFilesFound>=5){bgMusic.src='reveal.mp3'; bgMusic.play(); alert("🕊️ Fin Réveil !");} else if(symbolFound>=20 && pcFilesFound>=10){bgMusic.src='truth.mp3'; bgMusic.play(); alert("🔥 Fin Vérité Totale !");} else{bgMusic
