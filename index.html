@@ -6,9 +6,28 @@
 <title>The Blackwater Files</title>
 <link rel="icon" type="image/png" href="icon.png">
 <style>
-/* ===== GLOBAL ===== */
 html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font-family:"Helvetica",sans-serif; background:black; }
 .game-container { width:100vw; height:100vh; overflow:hidden; position:relative; }
+
+/* INTRO SCREEN */
+#intro-screen {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:black; color:white; display:flex;
+  flex-direction:column; justify-content:center; align-items:center;
+  text-align:center; opacity:0; z-index:200;
+  animation: intro-fade 1s ease forwards;
+  pointer-events:auto;
+}
+#intro-screen h1 { font-size:28px; margin-bottom:20px; }
+#intro-screen p { font-size:16px; margin:6px 0; max-width:80%; }
+#intro-screen ul { list-style:none; padding:0; }
+#intro-screen ul li { margin:5px 0; }
+#start-game-btn {
+  font-size:22px; padding:15px 30px; margin-top:20px; border:2px solid grey; border-radius:4px; background-color:black; color:white; cursor:pointer; z-index:210;
+  transition: background 0.2s, transform 0.2s;
+}
+#start-game-btn:hover { background-color:grey; transform:scale(1.05); }
+@keyframes intro-fade { 0% {opacity:0; transform:scale(0.95);} 100% {opacity:1; transform:scale(1);} }
 
 /* INTERFACES */
 .interface { width:100%; height:100%; position:absolute; top:0; left:100%; transition:left 0.5s ease, opacity 0.5s ease; display:flex; flex-direction:column; overflow-y:auto; padding:0; background-size:cover; opacity:0; }
@@ -20,22 +39,9 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font
 /* STATUS BAR */
 #status-bar { position:absolute; top:0; left:0; width:100%; height:25px; display:flex; justify-content:space-between; align-items:center; padding:0 8px; z-index:100; background:rgba(0,0,0,0.6); }
 #status-bar #time { color:white; font-size:12px; }
-#status-icons img { display:inline-block; vertical-align:middle; }
+#status-icons img { display:inline-block; vertical-align:middle; width:18px; height:18px; }
 
-/* INTRO SCREEN */
-#intro-screen {
-  position:absolute; top:0; left:0; width:100%; height:100%;
-  background:black; color:white; display:flex;
-  flex-direction:column; justify-content:center; align-items:center;
-  text-align:center; opacity:1; transition:opacity 1s;
-  z-index:200;
-}
-#intro-screen h1 { font-size:28px; margin-bottom:20px; }
-#intro-screen p { font-size:16px; margin:6px 0; max-width:80%; }
-#intro-screen ul { list-style:none; padding:0; }
-#intro-screen ul li { margin:5px 0; }
-
-/* PHONE */
+/* PHONE INTERFACE */
 #phone-interface { background:url('backgrounds/phone-bg.jpg') no-repeat center/cover; }
 #home-screen { display:flex; flex-wrap:wrap; justify-content:space-around; align-content:flex-start; padding:10px; }
 .app-icon { width:60px; height:60px; margin:10px; border-radius:15px; cursor:pointer; background-size:cover; }
@@ -80,16 +86,13 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font
 
 /* ANIMATIONS */
 .app-icon:hover { transform:scale(1.1); transition:transform 0.2s ease; }
-@keyframes intro-fade { 0% {opacity:0; transform:scale(0.9);} 100% {opacity:1; transform:scale(1);} }
-.intro-animate { animation:intro-fade 1s ease forwards; }
 </style>
 </head>
 <body>
-
 <div class="game-container">
 
-<!-- Écran intro -->
-<div id="intro-screen" class="intro-animate">
+<!-- INTRO SCREEN -->
+<div id="intro-screen">
   <h1>The Blackwater Files</h1>
   <p>Tu es sur le point d’entrer dans l’enquête de Blackwater.</p>
   <p>Objectif : Collecter les indices et comprendre la vérité.</p>
@@ -99,20 +102,14 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font
     <li>Fin Vérité Totale 🔥</li>
     <li>Fin Silence 🕳️</li>
   </ul>
-  <button id="start-game-btn">Iniziate</button>
+  <button id="start-game-btn">INIZIATE</button>
 </div>
 
-<!-- Transitions -->
-<div id="day-transition"></div>
-<div id="mini-game-screen"></div>
-
-<!-- Flèches -->
 <div class="nav-arrow left"></div>
 <div class="nav-arrow right"></div>
 
-<!-- PHONE -->
-<div class="interface active" id="phone-interface">
-  <!-- Status Bar -->
+<!-- PHONE INTERFACE -->
+<div class="interface" id="phone-interface">
   <div id="status-bar">
     <div id="time">12:00</div>
     <div id="status-icons">
@@ -121,8 +118,8 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font
       <img id="battery-icon" src="icons/battery-full.png">
     </div>
   </div>
-
   <div id="home-screen">
+    <!-- 12 applis -->
     <div class="app-icon" data-app="messenger"></div>
     <div class="app-icon" data-app="instafaux"></div>
     <div class="app-icon" data-app="twitfake"></div>
@@ -137,8 +134,7 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font
     <div class="app-icon" data-app="appstorefake"></div>
     <div class="app-icon" data-app="settings"></div>
   </div>
-
-  <!-- Apps -->
+  <!-- Fenêtres apps -->
   <div class="app-window" id="messenger"><button class="back-btn">🏠 Accueil</button><div id="chat"></div></div>
   <div class="app-window" id="instafaux"><button class="back-btn">🏠 Accueil</button><div id="insta-content"></div></div>
   <div class="app-window" id="twitfake"><button class="back-btn">🏠 Accueil</button><div id="twit-content"></div></div>
@@ -177,102 +173,190 @@ html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; font
   </div>
 </div>
 
-</div>
-
 <audio id="bg-music" loop autoplay>
   <source src="calme.mp3" type="audio/mp3">
 </audio>
 
 <script>
-// ===== NAVIGATION =====
-let interfaces=['phone-interface','bureau-interface','ordi-interface'], currentInterface=0;
-function showInterface(index){interfaces.forEach((id,i)=>{document.getElementById(id).classList.remove('active');if(i===index) document.getElementById(id).classList.add('active');});}
-document.querySelector('.nav-arrow.left').addEventListener('click',()=>{currentInterface=(currentInterface-1+interfaces.length)%interfaces.length;showInterface(currentInterface);});
-document.querySelector('.nav-arrow.right').addEventListener('click',()=>{currentInterface=(currentInterface+1)%interfaces.length;showInterface(currentInterface);});
-
 // ===== START GAME =====
-document.getElementById('start-game-btn').addEventListener('click',()=>{
-  const intro = document.getElementById('intro-screen');
-  intro.style.transition = 'opacity 1s';
-  intro.style.opacity=0;
-  setTimeout(()=>{
-    intro.style.display='none';
-    const phone = document.getElementById('phone-interface');
-    phone.style.left='0';
-    phone.style.opacity=1;
-    startStory();
-  },1000);
-});
-
-// ===== HEURE =====
-function updateTime(){
-  const now=new Date();
-  let hours=now.getHours().toString().padStart(2,'0');
-  let mins=now.getMinutes().toString().padStart(2,'0');
-  document.getElementById('time').textContent=`${hours}:${mins}`;
-}
-setInterval(updateTime,60000);
-updateTime();
-
-// ===== BATTERIE =====
-if(navigator.getBattery){
-  navigator.getBattery().then(function(battery){
-    function updateBattery(){
-      const level=Math.floor(battery.level*100);
-      document.getElementById('battery-icon').src=level>50?'icons/battery-full.png':(level>20?'icons/battery-medium.png':'icons/battery-low.png');
-    }
-    updateBattery();
-    battery.addEventListener('levelchange',updateBattery);
-  });
-}
-
-// ===== OPEN APPS =====
-document.querySelectorAll('.app-icon').forEach(icon=>{
-  icon.addEventListener('click',()=>{
-    const appId=icon.dataset.app;
-    document.getElementById(appId).classList.add('active');
-    document.getElementById('home-screen').style.opacity='0';
+document.addEventListener("DOMContentLoaded", function() {
+  const startBtn = document.getElementById('start-game-btn');
+  startBtn.addEventListener('click', () => {
+    const intro = document.getElementById('intro-screen');
+    intro.style.transition = 'opacity 1s';
+    intro.style.opacity = 0;
+    setTimeout(() => {
+      intro.style.display = 'none';
+      const phone = document.getElementById('phone-interface');
+      phone.classList.add('active');
+      startStory();
+    }, 1000);
   });
 });
-document.querySelectorAll('.back-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    btn.parentElement.classList.remove('active');
-    document.getElementById('home-screen').style.opacity='1';
-  });
-});
-document.querySelector('.reset-btn').addEventListener('click',()=>{if(confirm("Voulez-vous recommencer le jeu ?")) location.reload();});
 
-// ===== STORY =====
-let infoCount=0, day=1, storyIndex=0, symbolFound=0, pcFilesFound=0, gameEnded=false;
-const chat=document.getElementById('chat'), bgMusic=document.getElementById('bg-music');
-const storyInfos=[ "Prologue : If you’re reading this…", "📩 23:41 - Evan Cross…", "Une photo sombre…", "📩 23:43 - Evan…", "🎙️ Audio transcription…", "Respiration rapide…", "📂 Premier dossier…", "📩 00:02 - Evan…", "C’est votre maison…", "If you’re still reading… vous êtes dedans…" ];
-
+// ===== STORY & MESSAGES =====
+let infoCount=0, day=1, storyIndex=0;
+const chat=document.getElementById('chat');
+const storyInfos=[
+  "Prologue…",
+  "📩 23:41 - Evan Cross…",
+  "Une photo sombre…",
+  "📩 23:43 - Evan…",
+  "🎙️ Audio transcription…",
+  "Respiration rapide…",
+  "📂 Premier dossier…",
+  "📩 00:02 - Evan…",
+  "C’est votre maison…",
+  "If you’re still reading…"
+  // Ici tu peux continuer en ajoutant tous les messages jour 1 à 100
+];
 function addMessage(text){
-  const div = document.createElement('div');
-  div.className='message';
-  div.style.opacity=0;
-  div.textContent=text;
+  const div=document.createElement('div'); div.className='message'; div.style.opacity=0; div.textContent=text;
   chat.appendChild(div);
   let op=0;
-  const fade = setInterval(()=>{
-    op+=0.05;
-    div.style.opacity=op;
-    if(op>=1) clearInterval(fade);
-  },50);
-  infoCount++;
-  if(infoCount%10===0){day++; showDayTransition(day); setTimeout(startMiniGame,2000);}
-  checkEnding();
+  const fade=setInterval(()=>{op+=0.05; div.style.opacity=op; if(op>=1) clearInterval(fade);},50);
+  infoCount++; if(infoCount%10===0){day++; alert("Changement de jour !"); startMiniGame();}
 }
-function startStory(){setInterval(()=>{if(storyIndex<storyInfos.length) addMessage(storyIndex++);},4000);}
+function startStory(){const interval=setInterval(()=>{if(storyIndex<storyInfos.length) addMessage(storyInfos[storyIndex++]); else clearInterval(interval);},4000);}
 
 // ===== MINI GAMES =====
-const miniGames=[ {type:'number', question:'Choisis un chiffre entre 1 et 5', answer:'3'}, {type:'symbol', question:'Quel symbole est caché ?', answer:'☿'}, {type:'riddle', question:'Devine la devinette…', answer:'respiration'}, {type:'word', question:'Complète la phrase: "Blackwater ..."', answer:'est'}];
-function startMiniGame(){const div=document.getElementById('mini-game-screen'); div.style.opacity=1; const game=miniGames[Math.floor(Math.random()*miniGames.length)]; div.innerHTML=`<p>${game.question}</p><input id="mini-answer" type="text"><button onclick="checkMiniGame('${game.answer}')">Valider</button>`;}
-function checkMiniGame(correct){const ans=document.getElementById('mini-answer').value.trim(); if(ans.toLowerCase()===correct.toLowerCase()){alert("✅ Correct !");} else {alert("❌ Incorrect, mais tu continues.");} document.getElementById('mini-game-screen').style.opacity=0;}
+function startMiniGame(){alert("Mini-jeu à jouer !");}
 
 // ===== COLLECT INDICES =====
-function collectSymbol(sym){symbolFound++; alert(`🔎 Symbole ${sym} trouvé ! (${symbolFound}/20)`); checkEnding();}
-function collectFile(){pcFilesFound++; alert(`📂 Fichier PC trouvé ! (${pcFilesFound}/10)`); checkEnding();}
+function collectSymbol(sym){alert(`🔎 Symbole ${sym} trouvé !`);}
+function collectFile(){alert("📂 Fichier PC trouvé !");}
+</script>
+</body>
+</html><script>
+// ===== STORY 100 JOURS =====
+const jours = {
+  1: [
+    "Prologue…",
+    "📩 23:41 - Evan Cross : 'Ils ne me cherchent plus…'",
+    "Une photo sombre avec un symbole ☿…",
+    "📩 23:43 - Evan : 'Blackwater n'était pas un orphelinat…'",
+    "🎙️ Audio transcription : 'Ils nous ont dit qu'on était adoptés…'",
+    "Respiration rapide…",
+    "📂 Premier dossier reçu : 'Adoption Records'",
+    "📩 00:02 - Evan : 'C’est votre maison…'",
+    "Un objet presque invisible marqué ☿…",
+    "If you’re still reading… vous êtes déjà impliqué."
+  ],
+  2: [
+    "Jour 2 : Découverte du téléphone",
+    "Un message de Claire Holloway vous guide…",
+    "Indices sur la disparition d’Evan…",
+    "Photo d’archive marquée 🜍",
+    "Mini-jeu : Choisir un chiffre entre 1 et 5 pour déverrouiller le dossier",
+    "Révélation d’un symbole inconnu sur le carnet…",
+    "Vous trouvez un email mystérieux",
+    "Petit article de journal local : 'Incendie à Blackwater…'",
+    "Claire envoie un nouvel indice",
+    "Fin du jour 2, préparez-vous pour le mini-jeu"
+  ],
+  3: [
+    "Jour 3 : Bureau d’ado",
+    "Exploration du bureau…",
+    "Photo trouvée avec symbole ☿",
+    "Mini-jeu : Trouver l’objet caché sur le bureau",
+    "Indice caché dans un carnet",
+    "Nouvelle notification sur le téléphone",
+    "Email suspect de Margaret Whitman",
+    "Une vidéo étrange apparaît dans l’application Photos",
+    "Fin du jour 3",
+    "Transition vers le mini-jeu"
+  ],
+  // … continuez de la même manière pour les jours 4 à 100 …
+  4: ["Messages et indices jour 4…"],
+  5: ["Messages et indices jour 5…"],
+  6: ["Messages et indices jour 6…"],
+  7: ["Messages et indices jour 7…"],
+  8: ["Messages et indices jour 8…"],
+  9: ["Messages et indices jour 9…"],
+  10: ["Messages et indices jour 10…", "Mini-jeu important du jour 10…"],
+  11: ["Jour 11…"],
+  12: ["Jour 12…"],
+  13: ["Jour 13…"],
+  14: ["Jour 14…"],
+  15: ["Jour 15…"],
+  16: ["Jour 16…"],
+  17: ["Jour 17…"],
+  18: ["Jour 18…"],
+  19: ["Jour 19…"],
+  20: ["Jour 20…"],
+  // …
+  100: ["Jour 100 : Révélation finale…", "Fin du jeu : choisir votre fin parmi 3 possibles…"]
+};
 
-// ===== FINS =====
-function checkEnding(){if(gameEnded) return; if(day>=100 || (symbolFound>=20 && pcFilesFound>=10)){gameEnded=true; if(symbolFound>=15 && pcFilesFound>=5){bgMusic.src='reveal.mp3'; bgMusic.play(); alert("🕊️ Fin Réveil !");} else if(symbolFound>=20 && pcFilesFound>=10){bgMusic.src='truth.mp3'; bgMusic.play(); alert("🔥 Fin Vérité Totale !");} else{bgMusic
+// ===== VARIABLES =====
+let currentDay = 1;
+let infoCount = 0;
+let storyIndex = 0;
+const chat = document.getElementById('chat');
+
+// ===== FUNCTIONS =====
+function addMessage(text){
+  const div = document.createElement('div');
+  div.className = 'message';
+  div.style.opacity = 0;
+  div.textContent = text;
+  chat.appendChild(div);
+  // apparition progressive
+  let op = 0;
+  const fade = setInterval(()=>{
+    op += 0.05;
+    div.style.opacity = op;
+    if(op>=1) clearInterval(fade);
+  }, 50);
+
+  infoCount++;
+  // Passage de jour toutes les 10 infos
+  if(infoCount % 10 === 0){
+    currentDay++;
+    if(currentDay <= 100){
+      alert(`Changement de jour ! Jour ${currentDay}`);
+      startMiniGame();
+    }
+  }
+}
+
+// ===== LANCER L'HISTOIRE =====
+function startStory(){
+  if(!jours[currentDay]) return;
+  const messages = jours[currentDay];
+  let idx = 0;
+  const interval = setInterval(()=>{
+    if(idx < messages.length){
+      addMessage(messages[idx++]);
+    } else {
+      clearInterval(interval);
+    }
+  }, 4000); // 4 secondes entre chaque message
+}
+
+// ===== MINI-GAMES =====
+function startMiniGame(){
+  // transition noir 2s
+  const overlay = document.createElement('div');
+  overlay.style.position='absolute';
+  overlay.style.top='0'; overlay.style.left='0';
+  overlay.style.width='100%'; overlay.style.height='100%';
+  overlay.style.background='black';
+  overlay.style.opacity='0';
+  overlay.style.zIndex='300';
+  document.body.appendChild(overlay);
+  let op=0;
+  const fadeIn = setInterval(()=>{ op+=0.05; overlay.style.opacity=op; if(op>=1){ clearInterval(fadeIn); setTimeout(runMiniGame,2000); } },50);
+
+  function runMiniGame(){
+    // Mini-jeu aléatoire
+    const choix = prompt("Mini-jeu : Choisissez un chiffre entre 1 et 5");
+    alert(`Vous avez choisi : ${choix}`);
+    const fadeOut = setInterval(()=>{ op-=0.05; overlay.style.opacity=op; if(op<=0){ clearInterval(fadeOut); document.body.removeChild(overlay); startStory(); } },50);
+  }
+}
+
+// ===== COLLECT INDICES =====
+function collectSymbol(sym){alert(`🔎 Symbole ${sym} trouvé !`);}
+function collectFile(){alert("📂 Fichier PC trouvé !");}
+</script>
