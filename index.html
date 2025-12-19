@@ -9,7 +9,7 @@ body, html {margin:0; padding:0; height:100%; font-family:Arial,sans-serif; back
 .interface {display:none; width:100%; height:100%; overflow:hidden;}
 .interface.active {display:block; text-align:center;}
 
-/* Barre de statut du téléphone */
+/* Barre de statut téléphone */
 #status-bar {display:flex; justify-content:space-between; padding:5px 10px; background:#111; font-size:14px;}
 
 /* Apps téléphone */
@@ -188,10 +188,10 @@ function afficherTransitionJour(){
 }
 function afficherJourActuel(){console.log("Jour "+jourActuel);}
 
-/* --- APPS TÉLÉPHONE --- */
+/* --- APPS TÉLÉPHONE INTERACTIVES --- */
 function openApp(app){
   const container=document.getElementById('app-container');
-  container.innerHTML=""; // Vide l'écran pour remplir tout l'espace
+  container.innerHTML=""; 
   const title=document.createElement('div');
   title.className="app-title";
   title.textContent=app.toUpperCase();
@@ -201,52 +201,56 @@ function openApp(app){
   content.style.width="100%";
   content.style.textAlign="center";
   content.style.padding="10px";
-  switch(app){
-    case 'messages':
-      content.innerHTML=`<p>💬 Nouveau message d'Evan Cross</p><p>"Ils ne nous ont jamais laissés partir..."</p>`;
-      break;
-    case 'photos':
-      content.innerHTML=`<p>📷 Photos avec indices cachés</p><img src="https://via.placeholder.com/200" alt="indice photo">`;
-      break;
-    case 'mail':
-      content.innerHTML=`<p>✉️ Email suspect reçu</p>`;
-      break;
-    case 'calendar':
-      content.innerHTML=`<p>📅 Dates importantes</p>`;
-      break;
-    case 'notes':
-      content.innerHTML=`<p>📝 Carnet personnel fragmenté</p>`;
-      break;
-    case 'social':
-      content.innerHTML=`<p>📰 Réseau social fictif</p><p>Articles avec indices cachés</p>`;
-      break;
-    case 'music':
-      content.innerHTML=`<p>🎵 Lecture audio mystérieuse</p>`;
-      break;
-    case 'maps':
-      content.innerHTML=`<p>🗺️ Lieux à explorer</p>`;
-      break;
-    case 'files':
-      content.innerHTML=`<p>📂 Fichiers cryptés</p>`;
-      break;
-    case 'camera':
-      content.innerHTML=`<p>📸 Prenez une photo d’un indice</p>`;
-      break;
-    case 'browser':
-      content.innerHTML=`<p>🌐 Navigateur simulé avec faux sites</p>`;
-      break;
-    case 'settings':
-      content.innerHTML=`<p>⚙️ Recommencer le jeu ou modifier paramètres</p>`;
-      break;
-    default:
-      content.innerHTML=`<p>Application vide</p>`;
+
+  // Contenu interactif pour chaque app
+  if(app==='messages'){
+    const messages=[
+      "Evan: Ils ne nous ont jamais laissés partir...",
+      "Claire: Tout est surveillé, sois prudent.",
+      "Indice caché: ☿",
+      "Daniel: Ne fais confiance à personne."
+    ];
+    messages.forEach(msg=>{
+      const p=document.createElement('p');
+      p.textContent=msg;
+      p.style.cursor="pointer";
+      p.addEventListener('click',()=>{
+        if(msg.includes("Indice") || msg.includes("☿")){
+          if(indicesCollectes<indicesTotal){
+            indicesCollectes++;
+            p.style.color="green";
+            alert("Indice collecté ! ("+indicesCollectes+"/"+indicesTotal+")");
+            if(indicesCollectes>=indicesTotal) finirJour();
+          }
+        }
+      });
+      content.appendChild(p);
+    });
+  } else if(app==='photos'){
+    for(let i=1;i<=3;i++){
+      const img=document.createElement('img');
+      img.src="https://via.placeholder.com/200";
+      img.style.margin="10px";
+      img.style.cursor="pointer";
+      img.addEventListener('click',()=>{
+        if(indicesCollectes<indicesTotal){
+          indicesCollectes++;
+          img.style.border="2px solid green";
+          alert("Indice photo collecté ! ("+indicesCollectes+"/"+indicesTotal+")");
+          if(indicesCollectes>=indicesTotal) finirJour();
+        }
+      });
+      content.appendChild(img);
+    }
+  } else {
+    content.innerHTML=`<p>Contenu de l'app ${app}</p><p>Cliquez sur les éléments pour collecter des indices si disponibles.</p>`;
   }
   container.appendChild(content);
 }
 
 /* --- BUREAU ET ORDINATEUR --- */
-function openDeskApp(app){document.getElementById('desk-content').innerHTML=`<div class="app-title">${app.toUpperCase()}</div><p>Contenu du bureau : ${app}</p>`;}
-function openComputerApp(app){document.getElementById('computer-content').innerHTML=`<div class="app-title">${app.toUpperCase()}</div><p>Contenu de l'ordinateur : ${app}</p>`;}
+function openDeskApp(app){document.getElementById('desk-content').innerHTML=`<div class="app-title">${app.toUpperCase()}</div><p>Contenu du bureau interactif pour ${app}</p>`;}
+function openComputerApp(app){document.getElementById('computer-content').innerHTML=`<div class="app-title">${app.toUpperCase()}</div><p>Contenu de l'ordinateur interactif pour ${app}</p>`;}
 
 /* --- BASE DES 100 JOURS --- */
 const jours={};
