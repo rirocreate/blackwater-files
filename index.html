@@ -172,3 +172,170 @@ function endGame(ending) {
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeu interactif iPhone</title>
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+body { font-family:"Helvetica",sans-serif; background:#000; margin:0; display:flex; justify-content:center; height:100vh; overflow:hidden; }
+.game-container { width:375px; height:667px; background:#fff; border-radius:30px; border:1px solid #ccc; box-shadow:0 5px 15px rgba(0,0,0,0.2); overflow:hidden; position:relative; }
+.interface { width:100%; height:100%; position:absolute; top:0; left:100%; transition:left 0.5s ease; display:flex; flex-direction:column; overflow-y:auto; background:#f0f0f5; padding:10px; }
+.interface.active { left:0; }
+.nav-arrow { position:absolute; bottom:10px; width:40px; height:40px; opacity:0.3; font-size:30px; color:#007aff; text-align:center; line-height:40px; cursor:pointer; z-index:20; }
+.nav-arrow.left { left:10px; } .nav-arrow.right { right:10px; }
+#home-screen { display:flex; flex-wrap:wrap; justify-content:space-around; align-content:flex-start; }
+.app-icon { width:60px; height:60px; background:#007aff; border-radius:15px; margin:10px; display:flex; justify-content:center; align-items:center; color:#fff; font-size:12px; text-align:center; cursor:pointer; flex-direction:column; }
+.app-icon span { margin-top:5px; font-size:10px; }
+.app-window { position:absolute; top:0; left:0; width:100%; height:100%; background:#fff; display:none; flex-direction:column; overflow-y:auto; padding:10px; z-index:10; }
+.app-window.active { display:flex; }
+.message { padding:10px 14px; border-radius:20px; max-width:80%; margin:6px 0; word-wrap:break-word; background:#e0e0ff; }
+.time { font-size:10px; color:#888; margin-bottom:2px; }
+.post { background:#f0f0f0; padding:8px 12px; border-radius:10px; margin:8px 0; }
+.back-btn, .settings-btn, .reset-btn { background:#007aff; color:#fff; border:none; padding:8px 12px; border-radius:10px; margin-bottom:10px; cursor:pointer; }
+.bureau, .ordinateur { display:flex; flex-direction:column; padding:10px; }
+.photo { margin:8px 0; }
+.indice { background:#fffae6; padding:8px; border-radius:10px; margin:5px 0; }
+.ordi-content { background:#f0f0f0; padding:10px; border-radius:10px; flex:1; overflow-y:auto; }
+.mini-game { background:#ffdddd; padding:10px; border-radius:10px; margin:10px 0; }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+
+  <!-- Flèches navigation -->
+  <div class="nav-arrow left">⬅️</div>
+  <div class="nav-arrow right">➡️</div>
+
+  <!-- Interface téléphone -->
+  <div class="interface active" id="phone-interface">
+    <div id="home-screen">
+      <div class="app-icon" data-app="messenger">💬<span>Chat</span></div>
+      <div class="app-icon" data-app="instafaux">📸<span>InstaFaux</span></div>
+      <div class="app-icon" data-app="twitfake">🐦<span>TwitFake</span></div>
+      <div class="app-icon" data-app="web">🌐<span>Web</span></div>
+      <div class="app-icon" data-app="notes">📝<span>Notes</span></div>
+      <div class="app-icon" data-app="mailfaux">✉️<span>MailFaux</span></div>
+      <div class="app-icon" data-app="calendar">📅<span>Calendar</span></div>
+      <div class="app-icon" data-app="photos">🖼️<span>Photos</span></div>
+      <div class="app-icon" data-app="mapsfake">🗺️<span>MapsFake</span></div>
+      <div class="app-icon" data-app="contacts">👤<span>Contacts</span></div>
+      <div class="app-icon" data-app="todo">✅<span>ToDo</span></div>
+      <div class="app-icon" data-app="appstorefake">🛍️<span>AppStore</span></div>
+      <div class="app-icon" data-app="settings">⚙️<span>Settings</span></div>
+    </div>
+
+    <!-- Apps -->
+    <div class="app-window" id="messenger"><button class="back-btn">🏠 Accueil</button><div id="chat"></div></div>
+    <div class="app-window" id="instafaux"><button class="back-btn">🏠 Accueil</button><div id="insta-content"></div></div>
+    <div class="app-window" id="twitfake"><button class="back-btn">🏠 Accueil</button><div id="twit-content"></div></div>
+    <div class="app-window" id="web"><button class="back-btn">🏠 Accueil</button><div id="web-content"></div></div>
+    <div class="app-window" id="notes"><button class="back-btn">🏠 Accueil</button><div id="notes-content"></div></div>
+    <div class="app-window" id="mailfaux"><button class="back-btn">🏠 Accueil</button><div id="mail-content"></div></div>
+    <div class="app-window" id="calendar"><button class="back-btn">🏠 Accueil</button><div id="calendar-content"></div></div>
+    <div class="app-window" id="photos"><button class="back-btn">🏠 Accueil</button><div id="photos-content"></div></div>
+    <div class="app-window" id="mapsfake"><button class="back-btn">🏠 Accueil</button><div id="maps-content"></div></div>
+    <div class="app-window" id="contacts"><button class="back-btn">🏠 Accueil</button><div id="contacts-content"></div></div>
+    <div class="app-window" id="todo"><button class="back-btn">🏠 Accueil</button><div id="todo-content"></div></div>
+    <div class="app-window" id="appstorefake"><button class="back-btn">🏠 Accueil</button><div id="appstore-content"></div></div>
+    <div class="app-window" id="settings"><button class="back-btn">🏠 Accueil</button><button class="reset-btn">🔄 Recommencer le jeu</button></div>
+  </div>
+
+  <!-- Bureau d'ado -->
+  <div class="interface" id="bureau-interface">
+    <div class="bureau">
+      <h3>Bureau d'ado</h3>
+      <div class="photo">📸 Photo de la chambre</div>
+      <div class="photo">📝 Note sur le bureau</div>
+      <div class="photo">🔑 Objet caché</div>
+    </div>
+  </div>
+
+  <!-- Ordinateur -->
+  <div class="interface" id="ordi-interface">
+    <div class="ordinateur">
+      <h3>Ordinateur</h3>
+      <div class="ordi-content" id="ordi-content">Tape tes recherches ici…</div>
+    </div>
+  </div>
+</div>
+
+<!-- Musique de fond -->
+<audio id="bg-music" loop autoplay>
+  <source src="calme.mp3" type="audio/mp3">
+</audio>
+
+<script>
+// Navigation interfaces
+let interfaces=['phone-interface','bureau-interface','ordi-interface'];
+let currentInterface=0;
+function showInterface(index){interfaces.forEach((id,i)=>{document.getElementById(id).classList.remove('active');if(i===index) document.getElementById(id).classList.add('active');});}
+document.querySelector('.nav-arrow.left').addEventListener('click',()=>{currentInterface=(currentInterface-1+interfaces.length)%interfaces.length;showInterface(currentInterface);});
+document.querySelector('.nav-arrow.right').addEventListener('click',()=>{currentInterface=(currentInterface+1)%interfaces.length;showInterface(currentInterface);});
+
+// Ouvrir applis
+document.querySelectorAll('.app-icon').forEach(icon=>{icon.addEventListener('click',()=>{const appId=icon.dataset.app;document.getElementById(appId).classList.add('active');document.getElementById('home-screen').style.opacity='0';});});
+// Retour accueil
+document.querySelectorAll('.back-btn').forEach(btn=>{btn.addEventListener('click',()=>{btn.parentElement.classList.remove('active');document.getElementById('home-screen').style.opacity='1';});});
+
+// Reset jeu
+document.querySelector('.reset-btn').addEventListener('click',()=>{if(confirm("Voulez-vous recommencer le jeu ?")) location.reload();});
+
+// Gestion info et jours
+let infoCount=0, day=1;
+const chat=document.getElementById('chat'), bgMusic=document.getElementById('bg-music');
+const storyInfos=[
+"Bienvenue dans Elmwood. Tu es Alex, un adolescent curieux.",
+"Ton ami Léo t’a laissé un message étrange hier soir.",
+"Une rumeur court sur une maison abandonnée en ville...",
+"Tu découvres un objet suspect sur ton bureau.",
+"Le professeur mystérieux semble te surveiller.",
+"Un email anonyme arrive : 'Regarde sous le lit.'",
+"Dans le parc, tu trouves une photo étrange.",
+"Une notification de TwitFake indique que quelqu’un t’observe.",
+"Ton téléphone vibre : un indice caché dans Notes.",
+"Un mini-jeu apparaît pour déchiffrer un code secret."
+];
+function addInfo(index,music=null){
+  const div=document.createElement('div'); div.className='message';
+  div.textContent=storyInfos[index % storyInfos.length];
+  chat.appendChild(div); chat.scrollTop=chat.scrollHeight;
+  infoCount++;
+  if(music){bgMusic.src=music; bgMusic.play();}
+  if(infoCount%10===0){day++; alert(`🎯 Jour ${day} ! Mini-jeu en cours…`); startMiniGame();}
+}
+
+// Mini-jeu simple
+function startMiniGame(){
+  const answer=prompt("Mini-jeu : devine le chiffre entre 1 et 5");
+  if(answer==3){alert("✅ Correct !");} else {alert("❌ Incorrect, mais tu continues le jeu.");}
+}
+
+// Ajout infos progressives toutes les 3s
+let storyIndex=0;
+setInterval(()=>{addInfo(storyIndex++, storyIndex%20===0?'suspense.mp3':null);},3000);
+
+// Remplir autres applis avec plusieurs fonctions
+document.getElementById('insta-content').innerHTML=
+`<div class="post">Photo 1 : indice dans le parc</div>
+<div class="post">Photo 2 : objet suspect trouvé</div>
+<div class="post">Photo 3 : quelqu'un surveille la maison</div>`;
+document.getElementById('twit-content').innerHTML=
+`<div class="post">Tweet 1 : "Indice laissé sur la place"</div>
+<div class="post">Tweet 2 : "Attention à la cave!"</div>`;
+document.getElementById('notes-content').innerHTML=
+`<div class="post">Note 1 : "Vérifier le tiroir secret"</div>
+<div class="post">Note 2 : "Regarder sous le lit"</div>`;
+document.getElementById('mail-content').innerHTML=
+`<div class="post">Email 1 : Message crypté reçu</div>
+<div class="post">Email 2 : Indice pour la fin mystérieuse</div>`;
+document.getElementById('calendar-content').innerHTML=
+`<div class="post">Événement 1 : Rendez-vous suspect</div>
+<div class="post">Événement 2 : Livraison étrange</div>`;
+</script>
+
+</body>
+</html>
