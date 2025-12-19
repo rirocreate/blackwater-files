@@ -5,289 +5,140 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blackwater Files</title>
 <style>
-/* ===== Global ===== */
-body, html {
-  margin:0;
-  padding:0;
-  font-family: Arial, sans-serif;
-  height:100%;
-  overflow:hidden;
-  background:black;
-}
+  /* Interface générale */
+  body, html { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; background: #000; color: #fff; }
+  .interface { display: none; width: 100%; height: 100%; overflow: hidden; }
+  .interface.active { display: block; }
 
-/* ===== Intro Screen ===== */
-#intro-screen {
-  position:absolute; top:0; left:0;
-  width:100%; height:100%;
-  background-color:black;
-  color:white;
-  display:flex; flex-direction:column; justify-content:center; align-items:center;
-  z-index:500;
-  transition: opacity 0.5s;
-}
-#intro-screen h1 { font-size:2em; margin-bottom:1em; text-align:center; }
-#intro-screen p { max-width:80%; text-align:center; margin-bottom:2em; }
-#start-btn {
-  padding: 15px 30px;
-  background-color:#444;
-  color:white;
-  border:2px solid grey;
-  border-radius:0;
-  cursor:pointer;
-  font-size:1.2em;
-}
+  /* Barre de statut du téléphone */
+  #status-bar { display: flex; justify-content: space-between; padding: 5px 10px; background: #111; font-size: 14px; }
 
-/* ===== Interfaces ===== */
-.interface {
-  position:absolute;
-  top:0; left:100%;
-  width:100%; height:100%;
-  transition: all 0.5s;
-  overflow:hidden;
-  background-size: cover;
-  background-position: center;
-}
-.interface.active { left:0; opacity:1; }
+  /* Apps téléphone */
+  .apps-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; padding: 10px; }
+  .app-button { font-size: 30px; width: 60px; height: 60px; border-radius: 15px; border: 1px solid #888; background-color: #222; cursor: pointer; color: #fff; }
+  
+  /* Conteneur contenu apps */
+  #app-container, #desk-content, #computer-content { margin-top: 10px; height: calc(100% - 100px); overflow-y: auto; padding: 10px; text-align: center; }
 
-/* ===== Barre du haut (heure, réseau, batterie) ===== */
-.status-bar {
-  position:absolute; top:0; left:0; width:100%; height:30px;
-  display:flex; justify-content:space-between; align-items:center;
-  color:white; font-size:14px; padding:0 10px;
-  background:rgba(0,0,0,0.5);
-  z-index:200;
-}
-.status-bar div { display:flex; align-items:center; }
+  /* Bureau et ordinateur icônes */
+  .desk-icons, .computer-icons { display: flex; gap: 15px; justify-content: flex-start; padding: 10px; }
+  .desk-app, .computer-app { font-size: 25px; width: 80px; height: 80px; border-radius: 10px; border: 1px solid #888; background-color: #222; color: #fff; cursor: pointer; }
 
-/* ===== Applications ===== */
-.apps { display:flex; flex-wrap:wrap; padding:10px; justify-content:center; margin-top:40px; }
-.app {
-  width:60px; height:60px; margin:5px; border-radius:15px;
-  background-color:#222; display:flex; justify-content:center; align-items:center;
-  cursor:pointer; position:relative;
-}
-.app img { width:80%; height:80%; }
-
-/* ===== Chat / Messages ===== */
-#chat { 
-  position:absolute; bottom:0; left:0; width:100%; height:70%; 
-  overflow-y:auto; display:flex; flex-direction:column; padding:10px;
-}
-.message {
-  background:rgba(255,255,255,0.1);
-  color:white;
-  margin:5px 0;
-  padding:10px;
-  border-radius:10px;
-  max-width:80%;
-  align-self:center;
-  opacity:0;
-  transition: opacity 0.5s;
-}
-
-/* ===== Overlay mini-jeu ===== */
-#mini-overlay {
-  position:absolute; top:0; left:0; width:100%; height:100%;
-  background:black; opacity:0; display:none; justify-content:center; align-items:center;
-  z-index:400; color:white; font-size:1.5em; text-align:center;
-}
+  /* Transition jour */
+  #transition-jour { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; flex-direction:column; font-size:24px; z-index:1000; }
 </style>
 </head>
 <body>
 
-<!-- Intro -->
-<div id="intro-screen">
-  <h1>Blackwater Files</h1>
-  <p>Vous allez enquêter sur Blackwater. Découvrez les indices, résolvez les mini-jeux, et choisissez votre destin.<br>3 fins possibles : heureuse, révélation complète, mauvaise.</p>
-  <button id="start-btn">Iniziate</button>
-</div>
-
 <!-- Téléphone -->
-<div id="phone-interface" class="interface" style="background:url('backgrounds/phone-bg.jpg');">
-  <div class="status-bar">
-    <div id="time">12:00</div>
-    <div>📶 <span id="battery">🔋 100%</span></div>
+<div id="phone" class="interface active">
+  <div id="status-bar">
+    <span id="time">12:00</span>
+    <span id="network">📶</span>
+    <span id="battery">🔋100%</span>
   </div>
-  <div class="apps" id="phone-apps">
-    <!-- Icônes seront créées par JS -->
+  <div id="phone-apps" class="apps-container">
+    <button class="app-button" onclick="openApp('messages')">💬</button>
+    <button class="app-button" onclick="openApp('photos')">📷</button>
+    <button class="app-button" onclick="openApp('mail')">✉️</button>
+    <button class="app-button" onclick="openApp('calendar')">📅</button>
+    <button class="app-button" onclick="openApp('notes')">📝</button>
+    <button class="app-button" onclick="openApp('social')">📰</button>
+    <button class="app-button" onclick="openApp('music')">🎵</button>
+    <button class="app-button" onclick="openApp('maps')">🗺️</button>
+    <button class="app-button" onclick="openApp('files')">📂</button>
+    <button class="app-button" onclick="openApp('camera')">📸</button>
+    <button class="app-button" onclick="openApp('browser')">🌐</button>
+    <button class="app-button" onclick="openApp('settings')">⚙️</button>
   </div>
-  <div id="chat"></div>
+  <div id="app-container"></div>
 </div>
 
 <!-- Bureau -->
-<div id="bureau-interface" class="interface" style="background:url('backgrounds/bureau-bg.jpg');">
-  <div class="status-bar">
-    <div id="time-bureau">12:00</div>
-    <div>📶 <span id="battery-bureau">🔋 100%</span></div>
+<div id="desk" class="interface">
+  <div class="desk-icons">
+    <button class="desk-app" onclick="openDeskApp('journal')">📒</button>
+    <button class="desk-app" onclick="openDeskApp('clues')">🔍</button>
+    <button class="desk-app" onclick="openDeskApp('files')">📂</button>
   </div>
+  <div id="desk-content"></div>
 </div>
 
 <!-- Ordinateur -->
-<div id="ordi-interface" class="interface" style="background:url('backgrounds/ordi-bg.jpg');">
-  <div class="status-bar">
-    <div id="time-ordi">12:00</div>
-    <div>📶 <span id="battery-ordi">🔋 100%</span></div>
+<div id="computer" class="interface">
+  <div class="computer-icons">
+    <button class="computer-app" onclick="openComputerApp('browser')">🌐</button>
+    <button class="computer-app" onclick="openComputerApp('email')">✉️</button>
+    <button class="computer-app" onclick="openComputerApp('files')">📂</button>
   </div>
+  <div id="computer-content"></div>
 </div>
 
-<!-- Mini-jeu Overlay -->
-<div id="mini-overlay"></div>
+<!-- Transition jour -->
+<div id="transition-jour" style="display:none;"></div>
 
 <script>
-// ===== Variables globales =====
-let currentInterface = 0; // 0=phone,1=bureau,2=ordi
-const interfaces = ['phone-interface','bureau-interface','ordi-interface'];
-let currentDay = 1;
-let infoCount = 0;
-let messageIndex = 0;
-const chat = document.getElementById('chat');
-const miniOverlay = document.getElementById('mini-overlay');
+/* Gestion interface et swipe */
+let currentInterface = 'phone';
+function showInterface(name){document.querySelectorAll('.interface').forEach(d=>d.classList.remove('active'));document.getElementById(name).classList.add('active');currentInterface=name;}
+let startX=0;
+document.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
+document.addEventListener("touchend", e=>{let endX=e.changedTouches[0].clientX;if(endX-startX>50) swipeLeft();else if(startX-endX>50) swipeRight();});
+function swipeLeft(){if(!jourTerminé){alert("Finissez les indices avant de passer !");return;}if(currentInterface==='phone') showInterface('desk');else if(currentInterface==='desk') showInterface('computer');}
+function swipeRight(){if(!jourTerminé){alert("Finissez les indices avant de passer !");return;}if(currentInterface==='computer') showInterface('desk');else if(currentInterface==='desk') showInterface('phone');}
 
-// ===== Exemple d'applications =====
-const appsData = [
-  {name:"Messages",icon:"icons/messages.png",content:["Message 1","Message 2"]},
-  {name:"Photos",icon:"icons/photos.png",content:["Photo 1","Photo 2"]},
-  {name:"Email",icon:"icons/email.png",content:["Email 1","Email 2"]},
-  {name:"Journal",icon:"icons/journal.png",content:["Journal entry 1"]},
-  {name:"Réseau",icon:"icons/social.png",content:["Post 1","Post 2"]},
-  {name:"Notes",icon:"icons/notes.png",content:["Note 1"]},
-  {name:"Fichiers",icon:"icons/files.png",content:["Fichier 1"]},
-  {name:"Camera",icon:"icons/camera.png",content:["Photo 1"]},
-  {name:"Maps",icon:"icons/maps.png",content:["Indice 1"]},
-  {name:"Musique",icon:"icons/music.png",content:["Audio 1"]},
-  {name:"Contacts",icon:"icons/contacts.png",content:["Contact 1"]},
-  {name:"Paramètres",icon:"icons/settings.png",content:["Recommencer le jeu"]}
+/* Mini-jeux variés */
+const miniJeux=[
+  function jeuSymboles(){alert("Mini-jeu symboles à résoudre");},
+  function jeuPuzzle(){alert("Mini-jeu puzzle image");},
+  function jeuSequence(){alert("Mini-jeu séquence à mémoriser");},
+  function jeuChiffreHasard(){alert("Mini-jeu choisir un chiffre");},
+  function jeuDecode(){alert("Mini-jeu déchiffrage code");},
+  function jeuDifferences(){alert("Mini-jeu différences images");},
+  function jeuMemoire(){alert("Mini-jeu mémoire")}
 ];
+function lancerMiniJeu(){const i=Math.floor(Math.random()*miniJeux.length);miniJeux[i]();afficherJourActuel();}
 
-// ===== Création des icônes =====
-const phoneApps = document.getElementById('phone-apps');
-appsData.forEach(app=>{
-  const div = document.createElement('div');
-  div.className="app";
-  const img = document.createElement('img');
-  img.src = app.icon;
-  div.appendChild(img);
-  div.addEventListener('click', ()=>{
-    showAppContent(app);
-  });
-  phoneApps.appendChild(div);
-});
+/* Jour et indices */
+let jourActuel=1;
+let jourTerminé=false;
+let indicesCollectes=0;
+const indicesTotal=10;
+function collecterIndice(){indicesCollectes++;if(indicesCollectes>=indicesTotal){finirJour();}}
 
-// ===== Affichage contenu app =====
-function showAppContent(app){
-  chat.innerHTML="";
-  app.content.forEach(text=>{
-    addMessage(text);
-  });
-}
+function finirJour(){jourTerminé=true;afficherTransitionJour();}
 
-// ===== Ajout d'un message =====
-function addMessage(text){
-  const div = document.createElement('div');
-  div.className='message';
-  div.textContent=text;
-  chat.appendChild(div);
-  let op=0;
-  const fade=setInterval(()=>{
-    op+=0.05;
-    div.style.opacity=op;
-    if(op>=1) clearInterval(fade);
-  },50);
-  infoCount++;
-  if(infoCount %10===0){
-    currentDay++;
-    startMiniGame();
+function afficherTransitionJour(){const overlay=document.getElementById('transition-jour');overlay.style.display='flex';overlay.innerHTML=`<h2>Jour ${jourActuel}</h2><p>Préparez-vous pour les prochaines enquêtes</p>`;setTimeout(()=>{overlay.style.display='none';jourActuel++;jourTerminé=false;indicesCollectes=0;},2000);}
+
+function afficherJourActuel(){console.log("Jour "+jourActuel);}
+
+/* Apps téléphone */
+function openApp(app){
+  const container=document.getElementById('app-container');
+  switch(app){
+    case 'messages': container.innerHTML="<p>💬 Messages mystérieux</p>"; break;
+    case 'photos': container.innerHTML="<p>📷 Photos avec indices</p>"; break;
+    case 'mail': container.innerHTML="<p>✉️ Emails reçus</p>"; break;
+    case 'calendar': container.innerHTML="<p>📅 Dates importantes</p>"; break;
+    case 'notes': container.innerHTML="<p>📝 Carnet personnel fragmenté</p>"; break;
+    case 'social': container.innerHTML="<p>📰 Réseau social avec indices cachés</p>"; break;
+    case 'music': container.innerHTML="<p>🎵 Audio et sons mystérieux</p>"; break;
+    case 'maps': container.innerHTML="<p>🗺️ Plan et lieux à explorer</p>"; break;
+    case 'files': container.innerHTML="<p>📂 Fichiers cryptés</p>"; break;
+    case 'camera': container.innerHTML="<p>📸 Prendre des photos d’indices</p>"; break;
+    case 'browser': container.innerHTML="<p>🌐 Naviguer sur le faux internet</p>"; break;
+    case 'settings': container.innerHTML="<p>⚙️ Paramètres et recommencer jeu</p>"; break;
+    default: container.innerHTML="<p>Application vide</p>";
   }
 }
 
-// ===== Mini-jeux =====
-function startMiniGame(){
-  miniOverlay.style.display='flex';
-  miniOverlay.style.opacity=0;
-  let op=0;
-  const fadeIn = setInterval(()=>{
-    op+=0.05;
-    miniOverlay.style.opacity=op;
-    if(op>=1){
-      clearInterval(fadeIn);
-      setTimeout(runMiniGame,2000);
-    }
-  },50);
-}
+/* Bureau et ordinateur */
+function openDeskApp(app){document.getElementById('desk-content').innerHTML=`<p>${app} ouvert sur le bureau</p>`;}
+function openComputerApp(app){document.getElementById('computer-content').innerHTML=`<p>${app} ouvert sur l’ordinateur</p>`;}
 
-function runMiniGame(){
-  const choix = prompt("Mini-jeu : choisissez un chiffre entre 1 et 5");
-  alert(`Vous avez choisi : ${choix}`);
-  const fadeOut = setInterval(()=>{
-    let op=parseFloat(miniOverlay.style.opacity);
-    op-=0.05;
-    miniOverlay.style.opacity=op;
-    if(op<=0){
-      clearInterval(fadeOut);
-      miniOverlay.style.display='none';
-    }
-  },50);
-}
-
-// ===== Swipe / changement interface =====
-function showInterface(index){
-  interfaces.forEach((id,i)=>{
-    const el=document.getElementById(id);
-    if(i===index) el.classList.add('active');
-    else el.classList.remove('active');
-  });
-}
-document.addEventListener('keydown', e=>{
-  if(e.key==='ArrowRight'){
-    currentInterface=(currentInterface+1)%3;
-    showInterface(currentInterface);
-  }
-  if(e.key==='ArrowLeft'){
-    currentInterface=(currentInterface+2)%3;
-    showInterface(currentInterface);
-  }
-});
-
-// ===== Lancement du jeu =====
-document.getElementById('start-btn').addEventListener('click',()=>{
-  document.getElementById('intro-screen').style.opacity=0;
-  setTimeout(()=>{
-    document.getElementById('intro-screen').style.display='none';
-    showInterface(0); // téléphone visible
-    startStory();
-  },1000);
-});
-
-// ===== Story exemple =====
-const jours = {
-  1:["Bienvenue dans Blackwater…","Votre enquête commence maintenant.","Cherchez les indices.","Collectez les symboles.","Mini-jeux toutes les 10 infos…"],
-  2:["Jour 2 : téléchargez le dossier…","Photo étrange sur le bureau…","Mini-jeu à résoudre…"],
-  3:["Jour 3 : messages de Claire…","Indice trouvé dans les fichiers…"]
-};
-
-function startStory(){
-  if(!jours[currentDay]) return;
-  const messages=jours[currentDay];
-  let idx=0;
-  const interval=setInterval(()=>{
-    if(idx<messages.length){
-      addMessage(messages[idx++]);
-    } else {
-      clearInterval(interval);
-    }
-  },4000);
-}
-
-// ===== Heure batterie =====
-function updateTime(){
-  const date=new Date();
-  const timeStr=date.getHours().toString().padStart(2,'0')+":"+date.getMinutes().toString().padStart(2,'0');
-  document.getElementById('time').textContent=timeStr;
-  document.getElementById('time-bureau').textContent=timeStr;
-  document.getElementById('time-ordi').textContent=timeStr;
-}
-setInterval(updateTime,60000);
-updateTime();
+/* Bloc des 100 jours - exemple simplifié, tu peux rajouter tous les textes et mini-jeux */
+const jours={};
+for(let i=1;i<=100;i++){jours[i]=[`Jour ${i} : message principal`, `Mini-jeu : résoudre un indice`];}
 </script>
 </body>
 </html>
