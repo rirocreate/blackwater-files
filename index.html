@@ -102,10 +102,10 @@ body, html {margin:0; padding:0; height:100%; font-family:Arial,sans-serif; back
 <script>
 /* --- INTRO MESSAGES --- */
 const messagesIntro=[
-  "Bienvenue dans l’enquête Blackwater Files.",
-  "Vous êtes sur le point de découvrir des secrets cachés.",
+  "Bienvenue dans l’affaire Blackwater Files.",
+  "Retrouver les secret de la petite campagne BlackWater.",
   "Collectez les indices et résolvez les mini-jeux pour avancer.",
-  "⚠️ Attention : le jeu comporte 3 fins différentes !"
+  " remarques : le jeu comporte 3 fins différentes "
 ];
 const introMessagesDiv=document.getElementById('intro-messages');
 function afficherMessagesIntro(){
@@ -178,7 +178,7 @@ function finirJour(){jourTerminé=true; afficherTransitionJour();}
 function afficherTransitionJour(){
   const overlay=document.getElementById('transition-jour');
   overlay.style.display='flex';
-  overlay.innerHTML=`<h2>Jour ${jourActuel}</h2><p>Préparez-vous pour les prochaines enquêtes</p>`;
+  overlay.innerHTML=`<h2>Jour ${jourActuel}</h2><p>Êtes vous sûre ?..</p>`;
   setTimeout(()=>{
     overlay.style.display='none';
     jourActuel++;
@@ -205,10 +205,10 @@ function openApp(app){
   // Contenu interactif pour chaque app
   if(app==='messages'){
     const messages=[
-      "Evan: Ils ne nous ont jamais laissés partir...",
-      "Claire: Tout est surveillé, sois prudent.",
-      "Indice caché: ☿",
-      "Daniel: Ne fais confiance à personne."
+      "Evan: Ils ne te laisseront jamais partir...",
+      "Claire: fait confiance a la famille BlackWater ils ont des information importantes.",
+      "☿",
+      "Daniel: Ne fait pas confiance à la famille BlackWater."
     ];
     messages.forEach(msg=>{
       const p=document.createElement('p');
