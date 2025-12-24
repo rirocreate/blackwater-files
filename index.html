@@ -170,3 +170,74 @@ window.onload=startIntro;
 
 </body>
 </html>
+const appsIndices = {
+  messages: [
+    {text: "Ils disent que c'est juste des rêves… ☿", found:false},
+    {text: "Evan m’a dit de regarder les carnets… ☿", found:false},
+    {text: "Dernier message: 'They are watching…' ☿", found:false}
+  ],
+  social: [
+    {text: "Post : #Blackwater mysterieux… ☿", found:false},
+    {text: "Photo floue du bureau de Claire 🜍", found:false},
+    {text: "Tweet crypté : 🜔", found:false}
+  ],
+  notes: [
+    {text: "Note : 'Ne pas oublier le symbole 🜨'", found:false},
+    {text: "Journal : 'Ils savent que je me souviens ☿'", found:false},
+    {text: "Carnet fragmenté, page 3 🜍", found:false}
+  ],
+  photos: [
+    {text: "Photo d’un carnet jauni ☿", found:false},
+    {text: "Photo de groupe, coin caché 🜍", found:false},
+    {text: "Photo scellée, montre arrêtée 🜨", found:false}
+  ],
+  mail: [
+    {text: "Mail : 'Arrête de chercher… ☿'", found:false},
+    {text: "Mail avec pièce jointe : 🜔", found:false},
+    {text: "Mail crypté, destinataire inconnu 🜍", found:false}
+  ]
+};
+
+let collectedIndices = 0;
+const maxPerDay = 10;
+
+function openApp(appName){
+    hide("phoneScreen");
+    show("appWindow");
+
+    let content = `<h2>${appName}</h2>`;
+    const appData = appsIndices[appName];
+    if(!appData) content += "<p>Pas de contenu pour cette app.</p>";
+
+    appData.forEach((item, index)=>{
+        if(!item.found){
+            content += `<div class="indexItem" onclick="collectIndex('${appName}',${index})">${item.text}</div>`;
+        } else {
+            content += `<div class="indexFound">${item.text}</div>`;
+        }
+    });
+
+    document.getElementById("appContent").innerHTML = content;
+}
+
+function collectIndex(app, index){
+    const item = appsIndices[app][index];
+    if(item.found) return;
+    item.found = true;
+    collectedIndices++;
+
+    alert("Indice récupéré ! ("+collectedIndices+"/"+maxPerDay+")");
+
+    if(collectedIndices>=maxPerDay){
+        alert("Tu as trouvé 10 indices ! Mini-jeu à venir.");
+        collectedIndices = 0;
+        endDay(); // passe au mini-jeu ou jour suivant
+    }
+
+    openApp(app); // recharge l'app pour mettre à jour les indices
+}
+
+document.getElementById("closeApp").onclick=function(){
+    hide("appWindow");
+    show("phoneScreen");
+};
