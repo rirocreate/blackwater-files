@@ -5,640 +5,168 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>The Blackwater Files</title>
 <style>
-/* (CSS arrive dans le prochain message) */
+/* ===== RESET ===== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"SF Pro",sans-serif}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;color:#fff;}
+.hidden{display:none !important;}
+.fullscreen{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.centerText{text-align:center;font-size:1.2rem;margin-bottom:30px;line-height:1.4;}
+/* ===== INTRO ===== */
+.introText{max-width:85%;text-align:center;font-size:1.1rem;margin-bottom:40px;opacity:0;transition:opacity .3s;}
+.iniziateBtn{padding:15px 35px;background:#444;border:none;border-radius:10px;color:#fff;font-size:1.2rem;cursor:pointer;}
+/* ===== START DAY ===== */
+.startDayBtn{padding:15px 35px;background:#25a244;border:none;border-radius:10px;color:#fff;font-size:1.2rem;cursor:pointer;}
+/* ===== DAY LABEL ===== */
+.dayLabel{position:absolute;top:40%;width:100%;text-align:center;font-size:2rem;letter-spacing:2px;animation:fadeDay 1.5s ease-out;}
+@keyframes fadeDay{0%{opacity:0;transform:translateY(20px);}50%{opacity:1;}100%{opacity:0;transform:translateY(-20px);}}
+/* ===== STATUS BAR ===== */
+.statusBar{position:absolute;top:0;width:100%;padding:10px 15px;display:flex;justify-content:space-between;font-size:0.9rem;letter-spacing:0.5px;}
+.statusIcons{display:flex;gap:10px;align-items:center;}
+.sigBar{width:18px;height:14px;background:linear-gradient(90deg,#fff 25%,transparent 25%) 0 0/4px 100%,linear-gradient(90deg,#fff 25%,transparent 25%) 5px 3px/4px 100%,linear-gradient(90deg,#fff 25%,transparent 25%) 10px 6px/4px 100%,linear-gradient(90deg,#fff 25%,transparent 25%) 15px 9px/4px 100%;background-repeat:no-repeat;}
+.wifiIcon{width:20px;height:12px;border:2px solid #fff;border-top:none;border-radius:0 0 12px 12px;position:relative;}
+.wifiIcon:after{content:"";position:absolute;bottom:-5px;left:7px;width:6px;height:6px;background:#fff;border-radius:50%;}
+.batteryIcon{width:22px;height:10px;border:2px solid #fff;border-radius:3px;position:relative;}
+.batteryIcon:after{content:"";position:absolute;right:-4px;top:2px;width:3px;height:6px;background:#fff;border-radius:1px;}
+/* ===== APP GRID ===== */
+.appGrid{margin-top:70px;width:100%;padding:20px;display:grid;grid-template-columns:repeat(3,1fr);row-gap:35px;text-align:center;color:#fff;}
+.appIcon{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;}
+.appIcon span{width:60px;height:60px;background:#222;border-radius:18px;display:flex;justify-content:center;align-items:center;}
+/* ===== IOS MONOCHROME ICONS ===== */
+.icon-msg::before,.icon-user::before,.icon-photo::before,.icon-note::before,.icon-web::before,.icon-mail::before,.icon-audio::before,.icon-map::before,.icon-hashtag::before,.icon-cam::before,.icon-folder::before,.icon-cog::before,.icon-phone::before,.icon-desk::before,.icon-pc::before{content:"";width:28px;height:28px;background-size:cover;}
+.icon-msg::before{background-image:url('icons/msg.svg');}.icon-user::before{background-image:url('icons/user.svg');}.icon-photo::before{background-image:url('icons/photo.svg');}.icon-note::before{background-image:url('icons/note.svg');}.icon-web::before{background-image:url('icons/web.svg');}.icon-mail::before{background-image:url('icons/mail.svg');}.icon-audio::before{background-image:url('icons/audio.svg');}.icon-map::before{background-image:url('icons/map.svg');}.icon-hashtag::before{background-image:url('icons/social.svg');}.icon-cam::before{background-image:url('icons/camera.svg');}.icon-folder::before{background-image:url('icons/folder.svg');}.icon-cog::before{background-image:url('icons/settings.svg');}.icon-phone::before{background-image:url('icons/phone.svg');}.icon-desk::before{background-image:url('icons/desk.svg');}.icon-pc::before{background-image:url('icons/pc.svg');}
+/* ===== DESK & COMPUTER ===== */
+.deskBg,.computerBg{width:100%;height:100%;object-fit:cover;}
+.deskHint,.computerData{position:absolute;bottom:20px;width:100%;padding:15px;color:#fff;text-shadow:1px 1px 3px black;}
+/* ===== BOTTOM MENU ===== */
+.bottomMenu{position:absolute;bottom:0;width:100%;background:#111;border-top:1px solid #333;display:flex;justify-content:space-around;padding:10px 0;}
+.menuBtn{color:#fff;text-align:center;font-size:0.75rem;cursor:pointer;}
+.menuBtn span{width:28px;height:28px;background:#1b1b1e;border-radius:10px;display:flex;margin:0 auto 4px auto;}
+/* ===== APP WINDOW ===== */
+.appWindow{position:absolute;top:0;left:0;width:100%;height:100%;background:#121212;color:#fff;padding-top:60px;}
+#appContent{padding:20px;font-size:1.1rem;}
+.closeApp{position:absolute;top:15px;right:15px;padding:6px 15px;background:#333;border:none;border-radius:8px;color:#fff;cursor:pointer;}
 </style>
 </head>
 <body>
 
-<!-- INTRO ECRAN NOIR -->
+<!-- INTRO -->
 <div id="introScreen" class="fullscreen intro">
-    <div class="introText" id="introText"></div>
-    <button id="iniziateBtn" class="iniziateBtn">INIZIATE</button>
+  <div class="introText" id="introText"></div>
+  <button id="iniziateBtn" class="iniziateBtn">INIZIATE</button>
 </div>
 
-<!-- ECRAN COMMENCER JO 1 -->
+<!-- START DAY -->
 <div id="startDayScreen" class="fullscreen hidden">
-    <div class="centerText">Prêt à commencer ?</div>
-    <button id="startDayBtn" class="startDayBtn">Commencer Jour 1</button>
+  <div class="centerText">Prêt à commencer ?</div>
+  <button id="startDayBtn" class="startDayBtn">Commencer Jour 1</button>
 </div>
 
-<!-- ECRAN DE JOUR -->
+<!-- DAY LABEL -->
 <div id="dayLabel" class="dayLabel hidden"></div>
 
-<!-- INTERFACE TELEPHONE -->
+<!-- TELEPHONE -->
 <div id="phoneScreen" class="fullscreen hidden">
-
-    <!-- BARRE D'ÉTAT -->
-    <div class="statusBar">
-        <span id="statusTime">21:17</span>
-        <span class="statusIcons">
-            <span class="sigBar"></span>
-            <span class="wifiIcon"></span>
-            <span class="batteryIcon"></span>
-        </span>
-    </div>
-
-    <!-- APPS -->
-    <div class="appGrid">
-        <div class="appIcon" data-app="messages"><span class="icon-msg"></span><p>Messages</p></div>
-        <div class="appIcon" data-app="contacts"><span class="icon-user"></span><p>Contacts</p></div>
-        <div class="appIcon" data-app="gallery"><span class="icon-photo"></span><p>Photos</p></div>
-        <div class="appIcon" data-app="notes"><span class="icon-note"></span><p>Notes</p></div>
-        <div class="appIcon" data-app="browser"><span class="icon-web"></span><p>Navigateur</p></div>
-        <div class="appIcon" data-app="mail"><span class="icon-mail"></span><p>Mail</p></div>
-        <div class="appIcon" data-app="audio"><span class="icon-audio"></span><p>Audio</p></div>
-        <div class="appIcon" data-app="map"><span class="icon-map"></span><p>Carte</p></div>
-        <div class="appIcon" data-app="social"><span class="icon-hashtag"></span><p>Réseau</p></div>
-        <div class="appIcon" data-app="camera"><span class="icon-cam"></span><p>Caméra</p></div>
-        <div class="appIcon" data-app="folder"><span class="icon-folder"></span><p>Dossiers</p></div>
-        <div class="appIcon" data-app="settings"><span class="icon-cog"></span><p>Réglages</p></div>
-    </div>
+  <div class="statusBar">
+    <span id="statusTime">21:17</span>
+    <span class="statusIcons">
+      <span class="sigBar"></span>
+      <span class="wifiIcon"></span>
+      <span class="batteryIcon"></span>
+    </span>
+  </div>
+  <div class="appGrid">
+    <div class="appIcon" data-app="messages"><span class="icon-msg"></span><p>Messages</p></div>
+    <div class="appIcon" data-app="contacts"><span class="icon-user"></span><p>Contacts</p></div>
+    <div class="appIcon" data-app="gallery"><span class="icon-photo"></span><p>Photos</p></div>
+    <div class="appIcon" data-app="notes"><span class="icon-note"></span><p>Notes</p></div>
+    <div class="appIcon" data-app="browser"><span class="icon-web"></span><p>Navigateur</p></div>
+    <div class="appIcon" data-app="mail"><span class="icon-mail"></span><p>Mail</p></div>
+    <div class="appIcon" data-app="audio"><span class="icon-audio"></span><p>Audio</p></div>
+    <div class="appIcon" data-app="map"><span class="icon-map"></span><p>Carte</p></div>
+    <div class="appIcon" data-app="social"><span class="icon-hashtag"></span><p>Réseau</p></div>
+    <div class="appIcon" data-app="camera"><span class="icon-cam"></span><p>Caméra</p></div>
+    <div class="appIcon" data-app="folder"><span class="icon-folder"></span><p>Dossiers</p></div>
+    <div class="appIcon" data-app="settings"><span class="icon-cog"></span><p>Réglages</p></div>
+  </div>
 </div>
 
-<!-- ECRAN BUREAU -->
+<!-- BUREAU -->
 <div id="deskScreen" class="fullscreen hidden">
-    <div class="deskContent">
-        <img src="desk-bg.jpg" class="deskBg">
-        <div class="deskHint" id="deskHints"></div>
-    </div>
+  <img src="assets/desk-bg.jpg" class="deskBg">
+  <div class="deskHint" id="deskHints"></div>
 </div>
 
-<!-- ECRAN ORDINATEUR -->
+<!-- ORDINATEUR -->
 <div id="computerScreen" class="fullscreen hidden">
-    <div class="computerContent">
-        <img src="computer-bg.jpg" class="computerBg">
-        <div id="computerData" class="computerData"></div>
-    </div>
+  <img src="assets/computer-bg.jpg" class="computerBg">
+  <div id="computerData" class="computerData"></div>
 </div>
 
-<!-- MENU BAS iOS -->
+<!-- BOTTOM MENU -->
 <div id="bottomMenu" class="bottomMenu hidden">
-    <div class="menuBtn" data-target="phoneScreen"><span class="icon-phone"></span><p>Téléphone</p></div>
-    <div class="menuBtn" data-target="deskScreen"><span class="icon-desk"></span><p>Bureau</p></div>
-    <div class="menuBtn" data-target="computerScreen"><span class="icon-pc"></span><p>Ordinateur</p></div>
+  <div class="menuBtn" data-target="phoneScreen"><span class="icon-phone"></span><p>Téléphone</p></div>
+  <div class="menuBtn" data-target="deskScreen"><span class="icon-desk"></span><p>Bureau</p></div>
+  <div class="menuBtn" data-target="computerScreen"><span class="icon-pc"></span><p>Ordinateur</p></div>
 </div>
 
-<!-- FENÊTRE D'APP -->
+<!-- APP WINDOW -->
 <div id="appWindow" class="appWindow hidden">
-    <div id="appContent"></div>
-    <button id="closeApp" class="closeApp">Fermer</button>
+  <div id="appContent"></div>
+  <button id="closeApp" class="closeApp">Fermer</button>
 </div>
 
 <script>
-/* (JS arrive dans le troisième message) */
-</script>
+// ====== LOGIQUE JS COMPLET ======
 
-</body>
-</html>
-
-/* ====== RESET ====== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
-}
-
-html, body {
-    width: 100%;
-    height: 100%;
-    background: #000;
-    overflow: hidden;
-}
-
-/* ====== FULLSCREEN ====== */
-.fullscreen {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: #000;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.hidden { display: none !important; }
-
-/* ====== INTRO ====== */
-.introText {
-    max-width: 85%;
-    font-size: 1.1rem;
-    line-height: 1.5rem;
-    text-align: center;
-    margin-bottom: 40px;
-    opacity: 0;
-    transition: opacity .3s;
-}
-
-.iniziateBtn {
-    padding: 12px 30px;
-    background: #0d6efd;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 1.1rem;
-}
-
-/* ====== START DAY ====== */
-.centerText {
-    font-size: 1.4rem;
-    margin-bottom: 30px;
-}
-
-.startDayBtn {
-    padding: 12px 30px;
-    background: #25a244;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 1.1rem;
-}
-
-/* ====== DAY LABEL ====== */
-.dayLabel {
-    position: absolute;
-    top: 40%;
-    width: 100%;
-    text-align: center;
-    font-size: 2rem;
-    letter-spacing: 2px;
-    animation: fadeDay 1.5s ease-out;
-}
-
-@keyframes fadeDay {
-    0% { opacity: 0; transform: translateY(20px); }
-    50% { opacity: 1; }
-    100% { opacity: 0; transform: translateY(-20px); }
-}
-
-/* ====== STATUS BAR ====== */
-.statusBar {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    padding: 10px 15px;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-}
-
-.statusIcons {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-/* Custom signal/wifi/battery icons in CSS */
-.sigBar {
-    width: 18px;
-    height: 14px;
-    background: linear-gradient(90deg,#fff 25%,transparent 25%) 0 0/4px 100%,
-                linear-gradient(90deg,#fff 25%,transparent 25%) 5px 3px/4px 100%,
-                linear-gradient(90deg,#fff 25%,transparent 25%) 10px 6px/4px 100%,
-                linear-gradient(90deg,#fff 25%,transparent 25%) 15px 9px/4px 100%;
-    background-repeat: no-repeat;
-}
-
-.wifiIcon {
-    width: 20px;
-    height: 12px;
-    border: 2px solid #fff;
-    border-top: none;
-    border-radius: 0 0 12px 12px;
-    position: relative;
-}
-.wifiIcon:after {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 7px;
-    width: 6px;
-    height: 6px;
-    background: #fff;
-    border-radius: 50%;
-}
-
-.batteryIcon {
-    width: 22px;
-    height: 10px;
-    border: 2px solid #fff;
-    border-radius: 3px;
-    position: relative;
-}
-.batteryIcon:after {
-    content: "";
-    position: absolute;
-    right: -4px;
-    top: 2px;
-    width: 3px;
-    height: 6px;
-    background: #fff;
-    border-radius: 1px;
-}
-
-/* ====== APP GRID ====== */
-.appGrid {
-    margin-top: 70px;
-    width: 100%;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    row-gap: 35px;
-    text-align: center;
-    color: #fff;
-}
-
-.appIcon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-
-.appIcon span {
-    width: 60px;
-    height: 60px;
-    background: #1d1e20;
-    border-radius: 18px;
-    display: flex;
-}
-
-/* ====== IOS STYLE MONO ICONS ====== */
-.icon-msg::before,
-.icon-user::before,
-.icon-photo::before,
-.icon-note::before,
-.icon-web::before,
-.icon-mail::before,
-.icon-audio::before,
-.icon-map::before,
-.icon-hashtag::before,
-.icon-cam::before,
-.icon-folder::before,
-.icon-cog::before,
-.icon-phone::before,
-.icon-desk::before,
-.icon-pc::before {
-    content: "";
-    margin: auto;
-    width: 28px;
-    height: 28px;
-    background-size: cover;
-}
-
-/* Assign icons */
-.icon-msg::before { background-image: url('icons/msg.svg'); }
-.icon-user::before { background-image: url('icons/user.svg'); }
-.icon-photo::before { background-image: url('icons/photo.svg'); }
-.icon-note::before { background-image: url('icons/note.svg'); }
-.icon-web::before { background-image: url('icons/web.svg'); }
-.icon-mail::before { background-image: url('icons/mail.svg'); }
-.icon-audio::before { background-image: url('icons/audio.svg'); }
-.icon-map::before { background-image: url('icons/map.svg'); }
-.icon-hashtag::before { background-image: url('icons/social.svg'); }
-.icon-cam::before { background-image: url('icons/camera.svg'); }
-.icon-folder::before { background-image: url('icons/folder.svg'); }
-.icon-cog::before { background-image: url('icons/settings.svg'); }
-
-.icon-phone::before { background-image: url('icons/phone.svg'); }
-.icon-desk::before { background-image: url('icons/desk.svg'); }
-.icon-pc::before { background-image: url('icons/pc.svg'); }
-
-/* ====== DESK ====== */
-.deskBg, .computerBg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.deskHint, .computerData {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    padding: 15px;
-    color: #fff;
-    text-shadow: 1px 1px 3px black;
-}
-
-/* ====== BOTTOM MENU ====== */
-.bottomMenu {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: #111;
-    border-top: 1px solid #333;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-}
-
-.menuBtn {
-    color: #fff;
-    text-align: center;
-    font-size: 0.75rem;
-}
-
-.menuBtn span {
-    width: 28px;
-    height: 28px;
-    background: #1b1b1e;
-    border-radius: 10px;
-    display: flex;
-    margin: 0 auto 4px auto;
-}
-
-/* ====== APP WINDOW ====== */
-.appWindow {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: #121212;
-    color: #fff;
-    padding-top: 60px;
-}
-
-#appContent {
-    padding: 20px;
-    font-size: 1.1rem;
-}
-
-.closeApp {
-    position: absolute;
-    top: 15px; right: 15px;
-    padding: 6px 15px;
-    background: #333;
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-}
-
-/* ===========================
-   VARIABLES GLOBALES
-=========================== */
-
+// Variables globales
 let currentDay = 1;
 let maxDays = 100;
 let introStep = 0;
 
 const introTexts = [
-  "Bienvenue dans *Lost Memories*.",
-  "Tu t’apprêtes à mener une enquête à travers un faux iPhone.",
-  "Tu devras fouiller les applications, trouver des indices...",
-  "…résoudre des mini-jeux…",
-  "…et découvrir la vérité parmi les **3 fins possibles**.",
-  "Bonne chance."
+"Bienvenue dans *The Blackwater Files*.",
+"Tu t’apprêtes à mener une enquête à travers un faux iPhone.",
+"Tu devras fouiller les applications, trouver des indices…",
+"…résoudre des mini-jeux…",
+"…et découvrir la vérité parmi les 3 fins possibles.",
+"Bonne chance."
 ];
 
-/* ===========================
-   FONCTIONS UTILES
-=========================== */
+// Show / Hide
+function show(id){document.getElementById(id).classList.remove("hidden");}
+function hide(id){document.getElementById(id).classList.add("hidden");}
 
-function show(id) {
-    document.getElementById(id).classList.remove("hidden");
+// Fade intro
+function fadeInIntro(){const t=document.querySelector(".introText");t.style.opacity=0;setTimeout(()=>{t.style.opacity=1;},50);}
+
+// Intro automatique
+function startIntro(){
+  hide("phoneScreen");show("introScreen");
+  const textBox=document.querySelector(".introText");
+  introStep=0;textBox.innerHTML=introTexts[introStep];fadeInIntro();
+  const loop=setInterval(()=>{
+    introStep++;
+    if(introStep>=introTexts.length){clearInterval(loop);show("iniziateBtn");return;}
+    textBox.innerHTML=introTexts[introStep];fadeInIntro();
+  },4000);
 }
 
-function hide(id) {
-    document.getElementById(id).classList.add("hidden");
-}
+// Iniziate
+document.getElementById("iniziateBtn").onclick=function(){hide("introScreen");show("startDayScreen");};
 
-function fadeInIntro() {
-    const textBox = document.querySelector(".introText");
-    textBox.style.opacity = 0;
-    setTimeout(() => { textBox.style.opacity = 1; }, 50);
-}
+// Start day
+document.getElementById("startDayBtn").onclick=function(){hide("startDayScreen");show("phoneScreen");show("bottomMenu");document.getElementById("dayLabel").innerText="Jour "+currentDay;show("dayLabel");setTimeout(()=>hide("dayLabel"),1500);};
 
-/* ===========================
-   INTRO AUTOMATIQUE
-=========================== */
+// App clicks
+document.querySelectorAll(".appIcon").forEach(a=>{a.onclick=()=>{show("appWindow");document.getElementById("appContent").innerHTML="<h2>"+a.dataset.app+"</h2><p>Contenu interactif ici…</p>";};});
+document.getElementById("closeApp").onclick=()=>{hide("appWindow");};
 
-function startIntro() {
-    hide("phoneInterface");
-    show("introScreen");
+// Bottom menu
+document.querySelectorAll(".menuBtn").forEach(b=>{b.onclick=()=>{hide("phoneScreen");hide("deskScreen");hide("computerScreen");show(b.dataset.target);};});
 
-    const textBox = document.querySelector(".introText");
-    introStep = 0;
+// Lancement
+window.onload=startIntro;
+</script>
 
-    textBox.innerHTML = introTexts[introStep];
-    fadeInIntro();
-
-    // changement de texte toutes les 4 secondes
-    const loop = setInterval(() => {
-        introStep++;
-        if (introStep >= introTexts.length) {
-            clearInterval(loop);
-            show("iniziateBtn");
-            return;
-        }
-        textBox.innerHTML = introTexts[introStep];
-        fadeInIntro();
-    }, 4000);
-}
-
-/* ===========================
-   BOUTON INIZIATE
-=========================== */
-
-function pressIniziate() {
-    hide("introScreen");
-    show("startDayScreen");
-    document.getElementById("startDayNumber").innerText = "Jour 1";
-}
-
-/* ===========================
-   COMMENCER UN JOUR
-=========================== */
-
-function startDay() {
-    hide("startDayScreen");
-
-    // Animation "Jour X"
-    const label = document.getElementById("dayLabel");
-    label.innerText = "Jour " + currentDay;
-    show("dayLabel");
-
-    setTimeout(() => {
-        hide("dayLabel");
-        show("phoneInterface");
-    }, 1500);
-}
-
-/* ===========================
-   SYSTÈME DE MINI-JEUX
-   (100 mini-jeux différents générés automatiquement)
-=========================== */
-
-function generateMiniGame(day) {
-    const types = ["memory", "reaction", "choice", "code"];
-    const pick = types[Math.floor(Math.random() * types.length)];
-
-    switch (pick) {
-
-        case "memory":
-            return {
-                text: "Mini-jeu : Mémorise la séquence suivante :",
-                data: generateMemorySequence()
-            };
-
-        case "reaction":
-            return {
-                text: "Mini-jeu : Clique dès que le carré devient vert.",
-                data: null
-            };
-
-        case "choice":
-            return {
-                text: "Mini-jeu : Choisis la bonne réponse parmi les trois.",
-                data: generateQuiz()
-            };
-
-        case "code":
-            return {
-                text: "Mini-jeu : Trouve le bon code à 3 chiffres.",
-                data: generateCode()
-            };
-    }
-}
-
-function generateMemorySequence() {
-    let seq = [];
-    for (let i = 0; i < 4; i++) seq.push(Math.floor(Math.random() * 9));
-    return seq;
-}
-
-function generateQuiz() {
-    const q = [
-        ["Quelle couleur mélange rouge + bleu ?", "Violet", "Vert", "Orange", 1],
-        ["Combien font 9×3 ?", "27", "21", "33", 1],
-        ["Quel est le plus grand ?", "Éléphant", "Fourmi", "Chat", 1]
-    ];
-    return q[Math.floor(Math.random() * q.length)];
-}
-
-function generateCode() {
-    return Math.floor(100 + Math.random() * 900);
-}
-
-/* ===========================
-   SYSTÈME DES INDICES
-=========================== */
-
-const cluesPerDay = {};
-
-function getCluesForDay(day) {
-    if (!cluesPerDay[day]) {
-        cluesPerDay[day] = [
-            "Message suspect trouvé...",
-            "Photo cachée...",
-            "Note supprimée récupérée...",
-            "Localisation incohérente...",
-            "Audio étrange retrouvé..."
-        ].sort(() => Math.random() - 0.5).slice(0, 3);
-    }
-    return cluesPerDay[day];
-}
-
-/* ===========================
-   APPS INTERACTIVES
-=========================== */
-
-function openApp(appName) {
-    hide("phoneInterface");
-    show("appWindow");
-
-    let content = "";
-
-    switch(appName) {
-
-        case "messages":
-            content = `
-                <h2>Messages</h2>
-                <p>Discussion trouvée…</p>
-                <div class="bubble left">Pourquoi t’as tout effacé ?</div>
-                <div class="bubble right">Je devais le faire…</div>
-                <div class="bubble left">On va me retrouver.</div>
-            `;
-            break;
-
-        case "photos":
-            content = `
-                <h2>Photos</h2>
-                <img src="assets/pic1.jpg" style="width:100%;border-radius:8px;margin-top:15px;">
-                <p style="opacity:0.6;margin-top:10px;">Image modifiée…</p>
-            `;
-            break;
-
-        case "notes":
-            content = `
-                <h2>Notes</h2>
-                <p>Note retrouvée :</p>
-                <div class="noteBox">"Ne pas oublier ce qu’il a fait…"</div>
-            `;
-            break;
-
-        case "mail":
-            content = `
-                <h2>Mail</h2>
-                <p>Boîte de réception :</p>
-                <div class="mailItem">"Tu dois arrêter maintenant."</div>
-                <div class="mailItem">"Je t'avais prévenu."</div>
-            `;
-            break;
-
-        case "web":
-            content = `
-                <h2>Navigateur</h2>
-                <p>Recherches récentes :</p>
-                <ul>
-                    <li>"comment effacer traces iphone"</li>
-                    <li>"preuves disparition"</li>
-                </ul>
-            `;
-            break;
-
-        default:
-            content = `<p>Application vide.</p>`;
-    }
-
-    document.getElementById("appContent").innerHTML = content;
-}
-
-function closeApp() {
-    hide("appWindow");
-    show("phoneInterface");
-}
-
-/* ===========================
-   FIN D’UN JOUR
-=========================== */
-
-function endDay() {
-    currentDay++;
-    if (currentDay > maxDays) {
-        alert("Fin du jeu — une des 3 fins s'activera.");
-        return;
-    }
-
-    hide("phoneInterface");
-    document.getElementById("startDayNumber").innerText = "Jour " + currentDay;
-    show("startDayScreen");
-}
-
-/* ===========================
-   LANCEMENT
-=========================== */
-
-window.onload = () => startIntro();
-
-<html>
-<head>
-<style> … CSS ici … </style>
-</head>
-<body>
-… HTML ici …
-<script> … JS ici … </script>
 </body>
 </html>
