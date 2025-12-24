@@ -1,417 +1,644 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blackwater Files</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>The Blackwater Files</title>
 <style>
-body, html {margin:0; padding:0; height:100%; font-family:Arial,sans-serif; background:#000; color:#fff;}
-.interface {display:none; width:100%; height:100%; overflow:hidden;}
-.interface.active {display:block; text-align:center;}
-
-/* Barre de statut téléphone */
-#status-bar {display:flex; justify-content:space-between; padding:5px 10px; background:#111; font-size:14px;}
-
-/* Apps téléphone */
-.apps-container {display:flex; flex-wrap:wrap; gap:15px; justify-content:center; padding:10px;}
-.app-button {font-size:30px; width:60px; height:60px; border-radius:15px; border:1px solid #888; background-color:#222; cursor:pointer; color:#fff;}
-
-/* Contenu complet app */
-.app-screen {width:100%; height:calc(100% - 50px); background:#111; overflow-y:auto; display:flex; flex-direction:column; align-items:center; padding:10px;}
-.app-title {font-size:20px; font-weight:bold; margin:10px 0;}
-
-/* Bureau et ordinateur */
-.desk-icons, .computer-icons {display:flex; gap:15px; justify-content:flex-start; padding:10px;}
-.desk-app, .computer-app {font-size:25px; width:80px; height:80px; border-radius:10px; border:1px solid #888; background-color:#222; color:#fff; cursor:pointer;}
-
-/* Transition jour */
-#transition-jour {position:fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; flex-direction:column; font-size:24px; z-index:1000;}
-
-/* Intro */
-#intro {display:none; width:100%; height:100%; background:#000; color:#fff; text-align:center;}
-#intro.active {display:flex; justify-content:center; align-items:center; flex-direction:column; padding:20px;}
-#intro button {font-size:24px; padding:15px 30px; border:2px solid #888; background:#222; color:#fff; border-radius:8px; cursor:pointer; margin-top:20px;}
-
-/* Flèches navigation */
-#nav-arrows {position:absolute; bottom:10px; width:100%; display:flex; justify-content:space-between; padding:0 20px; font-size:30px; opacity:0.5;}
-#nav-arrows span {cursor:pointer; user-select:none;}
+/* (CSS arrive dans le prochain message) */
 </style>
 </head>
 <body>
 
-<!-- Écran d’intro -->
-<div id="intro" class="interface active">
-  <h1>🕯️ Blackwater Files 🕯️</h1>
-  <div id="intro-messages"></div>
-  <button id="iniziateBtn">INIZIATE</button>
+<!-- INTRO ECRAN NOIR -->
+<div id="introScreen" class="fullscreen intro">
+    <div class="introText" id="introText"></div>
+    <button id="iniziateBtn" class="iniziateBtn">INIZIATE</button>
 </div>
 
-<!-- Téléphone -->
-<div id="phone" class="interface">
-  <div id="status-bar">
-    <span id="time">12:00</span>
-    <span id="network">📶</span>
-    <span id="battery">🔋100%</span>
-  </div>
-  <div id="phone-apps" class="apps-container">
-    <button class="app-button" onclick="openApp('messages')">💬</button>
-    <button class="app-button" onclick="openApp('photos')">📷</button>
-    <button class="app-button" onclick="openApp('mail')">✉️</button>
-    <button class="app-button" onclick="openApp('calendar')">📅</button>
-    <button class="app-button" onclick="openApp('notes')">📝</button>
-    <button class="app-button" onclick="openApp('social')">📰</button>
-    <button class="app-button" onclick="openApp('music')">🎵</button>
-    <button class="app-button" onclick="openApp('maps')">🗺️</button>
-    <button class="app-button" onclick="openApp('files')">📂</button>
-    <button class="app-button" onclick="openApp('camera')">📸</button>
-    <button class="app-button" onclick="openApp('browser')">🌐</button>
-    <button class="app-button" onclick="openApp('settings')">⚙️</button>
-  </div>
-  <div id="app-container" class="app-screen"></div>
+<!-- ECRAN COMMENCER JO 1 -->
+<div id="startDayScreen" class="fullscreen hidden">
+    <div class="centerText">Prêt à commencer ?</div>
+    <button id="startDayBtn" class="startDayBtn">Commencer Jour 1</button>
 </div>
 
-<!-- Bureau -->
-<div id="desk" class="interface">
-  <div class="desk-icons">
-    <button class="desk-app" onclick="openDeskApp('journal')">📒 Journal</button>
-    <button class="desk-app" onclick="openDeskApp('clues')">🔍 Indices</button>
-    <button class="desk-app" onclick="openDeskApp('files')">📂 Fichiers</button>
-  </div>
-  <div id="desk-content" class="app-screen"></div>
+<!-- ECRAN DE JOUR -->
+<div id="dayLabel" class="dayLabel hidden"></div>
+
+<!-- INTERFACE TELEPHONE -->
+<div id="phoneScreen" class="fullscreen hidden">
+
+    <!-- BARRE D'ÉTAT -->
+    <div class="statusBar">
+        <span id="statusTime">21:17</span>
+        <span class="statusIcons">
+            <span class="sigBar"></span>
+            <span class="wifiIcon"></span>
+            <span class="batteryIcon"></span>
+        </span>
+    </div>
+
+    <!-- APPS -->
+    <div class="appGrid">
+        <div class="appIcon" data-app="messages"><span class="icon-msg"></span><p>Messages</p></div>
+        <div class="appIcon" data-app="contacts"><span class="icon-user"></span><p>Contacts</p></div>
+        <div class="appIcon" data-app="gallery"><span class="icon-photo"></span><p>Photos</p></div>
+        <div class="appIcon" data-app="notes"><span class="icon-note"></span><p>Notes</p></div>
+        <div class="appIcon" data-app="browser"><span class="icon-web"></span><p>Navigateur</p></div>
+        <div class="appIcon" data-app="mail"><span class="icon-mail"></span><p>Mail</p></div>
+        <div class="appIcon" data-app="audio"><span class="icon-audio"></span><p>Audio</p></div>
+        <div class="appIcon" data-app="map"><span class="icon-map"></span><p>Carte</p></div>
+        <div class="appIcon" data-app="social"><span class="icon-hashtag"></span><p>Réseau</p></div>
+        <div class="appIcon" data-app="camera"><span class="icon-cam"></span><p>Caméra</p></div>
+        <div class="appIcon" data-app="folder"><span class="icon-folder"></span><p>Dossiers</p></div>
+        <div class="appIcon" data-app="settings"><span class="icon-cog"></span><p>Réglages</p></div>
+    </div>
 </div>
 
-<!-- Ordinateur -->
-<div id="computer" class="interface">
-  <div class="computer-icons">
-    <button class="computer-app" onclick="openComputerApp('browser')">🌐</button>
-    <button class="computer-app" onclick="openComputerApp('email')">✉️</button>
-    <button class="computer-app" onclick="openComputerApp('files')">📂</button>
-  </div>
-  <div id="computer-content" class="app-screen"></div>
+<!-- ECRAN BUREAU -->
+<div id="deskScreen" class="fullscreen hidden">
+    <div class="deskContent">
+        <img src="desk-bg.jpg" class="deskBg">
+        <div class="deskHint" id="deskHints"></div>
+    </div>
 </div>
 
-<!-- Flèches navigation -->
-<div id="nav-arrows">
-  <span id="prev-arrow">⬅️</span>
-  <span id="next-arrow">➡️</span>
+<!-- ECRAN ORDINATEUR -->
+<div id="computerScreen" class="fullscreen hidden">
+    <div class="computerContent">
+        <img src="computer-bg.jpg" class="computerBg">
+        <div id="computerData" class="computerData"></div>
+    </div>
 </div>
 
-<!-- Transition jour -->
-<div id="transition-jour" style="display:none;"></div>
+<!-- MENU BAS iOS -->
+<div id="bottomMenu" class="bottomMenu hidden">
+    <div class="menuBtn" data-target="phoneScreen"><span class="icon-phone"></span><p>Téléphone</p></div>
+    <div class="menuBtn" data-target="deskScreen"><span class="icon-desk"></span><p>Bureau</p></div>
+    <div class="menuBtn" data-target="computerScreen"><span class="icon-pc"></span><p>Ordinateur</p></div>
+</div>
+
+<!-- FENÊTRE D'APP -->
+<div id="appWindow" class="appWindow hidden">
+    <div id="appContent"></div>
+    <button id="closeApp" class="closeApp">Fermer</button>
+</div>
 
 <script>
-/* --- INTRO MESSAGES --- */
-const messagesIntro=[
-  "Bienvenue dans l’affaire Blackwater Files.",
-  "Retrouver les secret de la petite campagne BlackWater.",
-  "Collectez les indices et résolvez les mini-jeux pour avancer.",
-  " remarques : le jeu comporte 3 fins différentes "
-];
-const introMessagesDiv=document.getElementById('intro-messages');
-function afficherMessagesIntro(){
-  introMessagesDiv.innerHTML="";
-  let i=0;
-  function afficherProchain(){
-    if(i<messagesIntro.length){
-      const p=document.createElement('p');
-      p.textContent=messagesIntro[i];
-      introMessagesDiv.appendChild(p);
-      i++;
-      setTimeout(afficherProchain,4000);
-    }
-  }
-  afficherProchain();
-}
-
-/* --- LANCER LE JEU --- */
-const intro=document.getElementById('intro');
-document.getElementById('iniziateBtn').addEventListener('click',()=>{
-  intro.classList.remove('active');
-  showInterface('phone');
-  afficherTransitionJour();
-  afficherMessagesIntro();
-});
-
-/* --- INTERFACES --- */
-let currentInterface='phone';
-function showInterface(name){
-  document.querySelectorAll('.interface').forEach(d=>d.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-  currentInterface=name;
-}
-
-/* --- FLÈCHES NAVIGATION --- */
-const prevArrow=document.getElementById('prev-arrow');
-const nextArrow=document.getElementById('next-arrow');
-let jourTerminé=false;
-
-prevArrow.addEventListener('click',()=>{
-  if(!jourTerminé){alert("Finissez les indices avant de changer d'interface !"); return;}
-  if(currentInterface==='computer') showInterface('desk');
-  else if(currentInterface==='desk') showInterface('phone');
-});
-
-nextArrow.addEventListener('click',()=>{
-  if(!jourTerminé){alert("Finissez les indices avant de changer d'interface !"); return;}
-  if(currentInterface==='phone') showInterface('desk');
-  else if(currentInterface==='desk') showInterface('computer');
-});
-
-/* --- MINI-JEUX --- */
-const miniJeux=[
-  function jeuSymboles(){alert("Mini-jeu symboles à résoudre");},
-  function jeuPuzzle(){alert("Mini-jeu puzzle image");},
-  function jeuSequence(){alert("Mini-jeu séquence à mémoriser");},
-  function jeuChiffreHasard(){alert("Mini-jeu choisir un chiffre");},
-  function jeuDecode(){alert("Mini-jeu déchiffrage code");},
-  function jeuDifferences(){alert("Mini-jeu différences images");},
-  function jeuMemoire(){alert("Mini-jeu mémoire")}
-];
-function lancerMiniJeu(){const i=Math.floor(Math.random()*miniJeux.length);miniJeux[i]();afficherJourActuel();}
-
-/* --- JOUR ET INDICES --- */
-let jourActuel=1;
-let indicesCollectes=0;
-const indicesTotal=10;
-function collecterIndice(){indicesCollectes++; if(indicesCollectes>=indicesTotal){finirJour();}}
-function finirJour(){jourTerminé=true; afficherTransitionJour();}
-function afficherTransitionJour(){
-  const overlay=document.getElementById('transition-jour');
-  overlay.style.display='flex';
-  overlay.innerHTML=`<h2>Jour ${jourActuel}</h2><p>Êtes vous sûre ?..</p>`;
-  setTimeout(()=>{
-    overlay.style.display='none';
-    jourActuel++;
-    jourTerminé=false;
-    indicesCollectes=0;
-  },2000);
-}
-function afficherJourActuel(){console.log("Jour "+jourActuel);}
-
-/* --- APPS TÉLÉPHONE INTERACTIVES --- */
-function openApp(app){
-  const container=document.getElementById('app-container');
-  container.innerHTML=""; 
-  const title=document.createElement('div');
-  title.className="app-title";
-  title.textContent=app.toUpperCase();
-  container.appendChild(title);
-  const content=document.createElement('div');
-  content.style.flex="1";
-  content.style.width="100%";
-  content.style.textAlign="center";
-  content.style.padding="10px";
-
-  // Contenu interactif pour chaque app
-  if(app==='messages'){
-    const messages=[
-      "Evan: Ils ne te laisseront jamais partir...",
-      "Claire: fait confiance a la famille BlackWater ils ont des information importantes.",
-      "☿",
-      "Daniel: Ne fait pas confiance à la famille BlackWater."
-    ];
-    messages.forEach(msg=>{
-      const p=document.createElement('p');
-      p.textContent=msg;
-      p.style.cursor="pointer";
-      p.addEventListener('click',()=>{
-        if(msg.includes("Indice") || msg.includes("☿")){
-          if(indicesCollectes<indicesTotal){
-            indicesCollectes++;
-            p.style.color="green";
-            alert("Indice collecté ! ("+indicesCollectes+"/"+indicesTotal+")");
-            if(indicesCollectes>=indicesTotal) finirJour();
-          }
-        }
-      });
-      content.appendChild(p);
-    });
-  } else if(app==='photos'){
-    for(let i=1;i<=3;i++){
-      const img=document.createElement('img');
-      img.src="https://via.placeholder.com/200";
-      img.style.margin="10px";
-      img.style.cursor="pointer";
-      img.addEventListener('click',()=>{
-        if(indicesCollectes<indicesTotal){
-          indicesCollectes++;
-          img.style.border="2px solid green";
-          alert("Indice photo collecté ! ("+indicesCollectes+"/"+indicesTotal+")");
-          if(indicesCollectes>=indicesTotal) finirJour();
-        }
-      });
-      content.appendChild(img);
-    }
-  } else {
-    content.innerHTML=`<p>Contenu de l'app ${app}</p><p>Cliquez sur les éléments pour collecter des indices si disponibles.</p>`;
-  }
-  container.appendChild(content);
-}
-
-/* --- BUREAU ET ORDINATEUR --- */
-function openDeskApp(app){document.getElementById('desk-content').innerHTML=`<div class="app-title">${app.toUpperCase()}</div><p>Contenu du bureau interactif pour ${app}</p>`;}
-function openComputerApp(app){document.getElementById('computer-content').innerHTML=`<div class="app-title">${app.toUpperCase()}</div><p>Contenu de l'ordinateur interactif pour ${app}</p>`;}
-
-/* --- BASE DES 100 JOURS --- */
-const jours={};
-for(let i=1;i<=100;i++){jours[i]=[`Jour ${i} : message principal`, `Mini-jeu : résoudre un indice`];}
+/* (JS arrive dans le troisième message) */
 </script>
+
 </body>
 </html>
-const jours = {
-  1: [
-    "Bienvenue dans la petite ville de Blackwater…",
-    "Votre enquête commence maintenant.",
-    "Vous recevez un message inconnu :",
-    "Evan Cross : 'Ils nous observent depuis toujours…'",
-    "Cherchez les premiers indices dans votre téléphone.",
-    "Mini-jeu à venir toutes les 10 informations."
-  ],
-  2: [
-    "Jour 2 : vous ouvrez l’appli Photos.",
-    "Une photo étrange d’un bâtiment marqué ☿ apparaît.",
-    "Vous notez le symbole dans votre journal.",
-    "Un nouvel email arrive : 'Ne faites confiance à personne.'",
-    "Mini-jeu à venir toutes les 10 informations."
-  ],
-  3: [
-    "Jour 3 : Claire vous envoie un message.",
-    "Elle vous guide subtilement vers un dossier caché.",
-    "Sur le bureau, vous trouvez une clé USB.",
-    "Indice trouvé : fichier nommé 'BLACKWATER_TEST.pdf'.",
-    "Mini-jeu à venir toutes les 10 informations."
-  ],
-  4: [
-    "Jour 4 : le téléphone vibre, nouveau message.",
-    "Evan : 'Chaque symbole a un sujet… chacun un rôle.'",
-    "Vous consultez le journal pour vérifier les symboles.",
-    "Mini-jeu : choisissez un chiffre entre 1 et 5 pour déverrouiller un fichier.",
-    "Indice trouvé : ☿ dans le coin d’une page."
-  ],
-  5: [
-    "Jour 5 : photo d’archive reçue.",
-    "Un visage que vous reconnaissez à peine apparaît.",
-    "Vous notez des annotations au dos : 🜍",
-    "Mini-jeu : trouvez l’intrus parmi les fichiers affichés.",
-    "Indice ajouté à votre collection."
-  ],
-  6: [
-    "Jour 6 : un email mystérieux vous envoie vers le bureau.",
-    "Vous trouvez un carnet avec des pages arrachées.",
-    "Mini-jeu : reconstituez le symbole manquant.",
-    "Vous obtenez le symbole ☿ complet."
-  ],
-  7: [
-    "Jour 7 : Evan vous envoie un audio.",
-    "Transcription : 'Ils disent que c’est juste des rêves…'",
-    "Vous ajoutez cette information à votre journal.",
-    "Mini-jeu : tapez la bonne séquence de chiffres entendue dans l’audio."
-  ],
-  8: [
-    "Jour 8 : nouveau post sur le faux réseau social.",
-    "Post contenant des indices cachés dans les métadonnées.",
-    "Mini-jeu : trouvez la date correcte à partir des indices.",
-    "Indice ajouté : date d’un événement important."
-  ],
-  9: [
-    "Jour 9 : Claire vous envoie une image avec un symbole partiel.",
-    "Vous devez compléter le symbole dans votre journal.",
-    "Mini-jeu : puzzle du symbole à reconstruire.",
-    "Indice ajouté à votre collection."
-  ],
-  10: [
-    "Jour 10 : premier vrai test de mémoire.",
-    "Evan : 'Rappelez-vous ce que vous avez vu la première nuit.'",
-    "Mini-jeu : choisissez la bonne séquence de symboles.",
-    "Toutes les informations collectées aujourd’hui sont validées."
-  ],
-  11: [
-    "Jour 11 : photo de groupe d’archive reçue.",
-    "Sur le coin, un symbole 🜍 apparaît presque invisible.",
-    "Mini-jeu : trouvez tous les symboles cachés dans la photo.",
-    "Indice ajouté."
-  ],
-  12: [
-    "Jour 12 : un dossier crypté apparaît sur votre ordinateur.",
-    "Mini-jeu : résolvez un petit code pour ouvrir le fichier.",
-    "Contenu du dossier : noms rayés et symboles.",
-    "Nouvelle information ajoutée à votre journal."
-  ],
-  13: [
-    "Jour 13 : messages étranges sur le téléphone.",
-    "Evan vous dit : 'Ne laissez personne savoir ce que vous trouvez.'",
-    "Mini-jeu : associez chaque symbole à la bonne catégorie de sujet.",
-    "Indice ajouté."
-  ],
-  14: [
-    "Jour 14 : photo d’un objet inconnu chez vous.",
-    "Symbole ☿ gravé dessus.",
-    "Mini-jeu : identifiez les différences entre deux images.",
-    "Indice ajouté."
-  ],
-  15: [
-    "Jour 15 : email d’un numéro inconnu.",
-    "Message : 'Ils savent que vous cherchez…'",
-    "Mini-jeu : choisissez le bon mot-clé pour avancer.",
-    "Indice ajouté."
-  ],
-  16: [
-    "Jour 16 : carnet trouvé sur le bureau.",
-    "Page avec des symboles répétés ☿ ☿ ☿",
-    "Mini-jeu : reproduisez le motif dans le bon ordre.",
-    "Indice ajouté."
-  ],
-  17: [
-    "Jour 17 : Evan envoie un message vocal.",
-    "Transcription : 'Si vous voyez un symbole, suivez son sujet…'",
-    "Mini-jeu : tapez les chiffres entendus correctement.",
-    "Indice ajouté."
-  ],
-  18: [
-    "Jour 18 : nouveau post sur le faux réseau social.",
-    "Indices cachés dans les commentaires.",
-    "Mini-jeu : trouvez la bonne combinaison de commentaires.",
-    "Indice ajouté."
-  ],
-  19: [
-    "Jour 19 : Claire envoie un document PDF crypté.",
-    "Mini-jeu : déchiffrez le mot de passe à partir des indices.",
-    "Indice ajouté."
-  ],
-  20: [
-    "Jour 20 : photo d’archive montrant un ancien bâtiment.",
-    "Symbole 🜔 sur un coin presque invisible.",
-    "Mini-jeu : associez le symbole au bon sujet.",
-    "Indice ajouté."
-  ],
-  21: [
-    "Jour 21 : nouvel email reçu.",
-    "Message : 'Chaque choix compte.'",
-    "Mini-jeu : choisissez la bonne option pour avancer.",
-    "Indice ajouté."
-  ],
-  22: [
-    "Jour 22 : photo trouvée sur le bureau.",
-    "Indices dans le fond de l’image.",
-    "Mini-jeu : puzzle de la photo à reconstituer.",
-    "Indice ajouté."
-  ],
-  23: [
-    "Jour 23 : message vocal d’Evan.",
-    "Transcription : 'Ils surveillent vos mouvements.'",
-    "Mini-jeu : tapez correctement la séquence de symboles entendue.",
-    "Indice ajouté."
-  ],
-  24: [
-    "Jour 24 : dossier classé trouvé sur l’ordinateur.",
-    "Symbole ☿ dans le coin d’une page.",
-    "Mini-jeu : associez chaque fichier à son symbole.",
-    "Indice ajouté."
-  ],
-  25: [
-    "Jour 25 : journée de révélation partielle.",
-    "Tous les indices collectés apparaissent dans le journal.",
-    "Mini-jeu final du bloc : puzzle combinant tous les symboles collectés.",
-    "Toutes les informations validées. Préparez-vous pour les prochains jours."
-  ]
-};
+
+/* ====== RESET ====== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+
+/* ====== FULLSCREEN ====== */
+.fullscreen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.hidden { display: none !important; }
+
+/* ====== INTRO ====== */
+.introText {
+    max-width: 85%;
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+    text-align: center;
+    margin-bottom: 40px;
+    opacity: 0;
+    transition: opacity .3s;
+}
+
+.iniziateBtn {
+    padding: 12px 30px;
+    background: #0d6efd;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.1rem;
+}
+
+/* ====== START DAY ====== */
+.centerText {
+    font-size: 1.4rem;
+    margin-bottom: 30px;
+}
+
+.startDayBtn {
+    padding: 12px 30px;
+    background: #25a244;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.1rem;
+}
+
+/* ====== DAY LABEL ====== */
+.dayLabel {
+    position: absolute;
+    top: 40%;
+    width: 100%;
+    text-align: center;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    animation: fadeDay 1.5s ease-out;
+}
+
+@keyframes fadeDay {
+    0% { opacity: 0; transform: translateY(20px); }
+    50% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* ====== STATUS BAR ====== */
+.statusBar {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding: 10px 15px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.statusIcons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Custom signal/wifi/battery icons in CSS */
+.sigBar {
+    width: 18px;
+    height: 14px;
+    background: linear-gradient(90deg,#fff 25%,transparent 25%) 0 0/4px 100%,
+                linear-gradient(90deg,#fff 25%,transparent 25%) 5px 3px/4px 100%,
+                linear-gradient(90deg,#fff 25%,transparent 25%) 10px 6px/4px 100%,
+                linear-gradient(90deg,#fff 25%,transparent 25%) 15px 9px/4px 100%;
+    background-repeat: no-repeat;
+}
+
+.wifiIcon {
+    width: 20px;
+    height: 12px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    position: relative;
+}
+.wifiIcon:after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 7px;
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.batteryIcon {
+    width: 22px;
+    height: 10px;
+    border: 2px solid #fff;
+    border-radius: 3px;
+    position: relative;
+}
+.batteryIcon:after {
+    content: "";
+    position: absolute;
+    right: -4px;
+    top: 2px;
+    width: 3px;
+    height: 6px;
+    background: #fff;
+    border-radius: 1px;
+}
+
+/* ====== APP GRID ====== */
+.appGrid {
+    margin-top: 70px;
+    width: 100%;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 35px;
+    text-align: center;
+    color: #fff;
+}
+
+.appIcon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.appIcon span {
+    width: 60px;
+    height: 60px;
+    background: #1d1e20;
+    border-radius: 18px;
+    display: flex;
+}
+
+/* ====== IOS STYLE MONO ICONS ====== */
+.icon-msg::before,
+.icon-user::before,
+.icon-photo::before,
+.icon-note::before,
+.icon-web::before,
+.icon-mail::before,
+.icon-audio::before,
+.icon-map::before,
+.icon-hashtag::before,
+.icon-cam::before,
+.icon-folder::before,
+.icon-cog::before,
+.icon-phone::before,
+.icon-desk::before,
+.icon-pc::before {
+    content: "";
+    margin: auto;
+    width: 28px;
+    height: 28px;
+    background-size: cover;
+}
+
+/* Assign icons */
+.icon-msg::before { background-image: url('icons/msg.svg'); }
+.icon-user::before { background-image: url('icons/user.svg'); }
+.icon-photo::before { background-image: url('icons/photo.svg'); }
+.icon-note::before { background-image: url('icons/note.svg'); }
+.icon-web::before { background-image: url('icons/web.svg'); }
+.icon-mail::before { background-image: url('icons/mail.svg'); }
+.icon-audio::before { background-image: url('icons/audio.svg'); }
+.icon-map::before { background-image: url('icons/map.svg'); }
+.icon-hashtag::before { background-image: url('icons/social.svg'); }
+.icon-cam::before { background-image: url('icons/camera.svg'); }
+.icon-folder::before { background-image: url('icons/folder.svg'); }
+.icon-cog::before { background-image: url('icons/settings.svg'); }
+
+.icon-phone::before { background-image: url('icons/phone.svg'); }
+.icon-desk::before { background-image: url('icons/desk.svg'); }
+.icon-pc::before { background-image: url('icons/pc.svg'); }
+
+/* ====== DESK ====== */
+.deskBg, .computerBg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.deskHint, .computerData {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    padding: 15px;
+    color: #fff;
+    text-shadow: 1px 1px 3px black;
+}
+
+/* ====== BOTTOM MENU ====== */
+.bottomMenu {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #111;
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+}
+
+.menuBtn {
+    color: #fff;
+    text-align: center;
+    font-size: 0.75rem;
+}
+
+.menuBtn span {
+    width: 28px;
+    height: 28px;
+    background: #1b1b1e;
+    border-radius: 10px;
+    display: flex;
+    margin: 0 auto 4px auto;
+}
+
+/* ====== APP WINDOW ====== */
+.appWindow {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #121212;
+    color: #fff;
+    padding-top: 60px;
+}
+
+#appContent {
+    padding: 20px;
+    font-size: 1.1rem;
+}
+
+.closeApp {
+    position: absolute;
+    top: 15px; right: 15px;
+    padding: 6px 15px;
+    background: #333;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+}
+
+/* ===========================
+   VARIABLES GLOBALES
+=========================== */
+
+let currentDay = 1;
+let maxDays = 100;
+let introStep = 0;
+
+const introTexts = [
+  "Bienvenue dans *Lost Memories*.",
+  "Tu t’apprêtes à mener une enquête à travers un faux iPhone.",
+  "Tu devras fouiller les applications, trouver des indices...",
+  "…résoudre des mini-jeux…",
+  "…et découvrir la vérité parmi les **3 fins possibles**.",
+  "Bonne chance."
+];
+
+/* ===========================
+   FONCTIONS UTILES
+=========================== */
+
+function show(id) {
+    document.getElementById(id).classList.remove("hidden");
+}
+
+function hide(id) {
+    document.getElementById(id).classList.add("hidden");
+}
+
+function fadeInIntro() {
+    const textBox = document.querySelector(".introText");
+    textBox.style.opacity = 0;
+    setTimeout(() => { textBox.style.opacity = 1; }, 50);
+}
+
+/* ===========================
+   INTRO AUTOMATIQUE
+=========================== */
+
+function startIntro() {
+    hide("phoneInterface");
+    show("introScreen");
+
+    const textBox = document.querySelector(".introText");
+    introStep = 0;
+
+    textBox.innerHTML = introTexts[introStep];
+    fadeInIntro();
+
+    // changement de texte toutes les 4 secondes
+    const loop = setInterval(() => {
+        introStep++;
+        if (introStep >= introTexts.length) {
+            clearInterval(loop);
+            show("iniziateBtn");
+            return;
+        }
+        textBox.innerHTML = introTexts[introStep];
+        fadeInIntro();
+    }, 4000);
+}
+
+/* ===========================
+   BOUTON INIZIATE
+=========================== */
+
+function pressIniziate() {
+    hide("introScreen");
+    show("startDayScreen");
+    document.getElementById("startDayNumber").innerText = "Jour 1";
+}
+
+/* ===========================
+   COMMENCER UN JOUR
+=========================== */
+
+function startDay() {
+    hide("startDayScreen");
+
+    // Animation "Jour X"
+    const label = document.getElementById("dayLabel");
+    label.innerText = "Jour " + currentDay;
+    show("dayLabel");
+
+    setTimeout(() => {
+        hide("dayLabel");
+        show("phoneInterface");
+    }, 1500);
+}
+
+/* ===========================
+   SYSTÈME DE MINI-JEUX
+   (100 mini-jeux différents générés automatiquement)
+=========================== */
+
+function generateMiniGame(day) {
+    const types = ["memory", "reaction", "choice", "code"];
+    const pick = types[Math.floor(Math.random() * types.length)];
+
+    switch (pick) {
+
+        case "memory":
+            return {
+                text: "Mini-jeu : Mémorise la séquence suivante :",
+                data: generateMemorySequence()
+            };
+
+        case "reaction":
+            return {
+                text: "Mini-jeu : Clique dès que le carré devient vert.",
+                data: null
+            };
+
+        case "choice":
+            return {
+                text: "Mini-jeu : Choisis la bonne réponse parmi les trois.",
+                data: generateQuiz()
+            };
+
+        case "code":
+            return {
+                text: "Mini-jeu : Trouve le bon code à 3 chiffres.",
+                data: generateCode()
+            };
+    }
+}
+
+function generateMemorySequence() {
+    let seq = [];
+    for (let i = 0; i < 4; i++) seq.push(Math.floor(Math.random() * 9));
+    return seq;
+}
+
+function generateQuiz() {
+    const q = [
+        ["Quelle couleur mélange rouge + bleu ?", "Violet", "Vert", "Orange", 1],
+        ["Combien font 9×3 ?", "27", "21", "33", 1],
+        ["Quel est le plus grand ?", "Éléphant", "Fourmi", "Chat", 1]
+    ];
+    return q[Math.floor(Math.random() * q.length)];
+}
+
+function generateCode() {
+    return Math.floor(100 + Math.random() * 900);
+}
+
+/* ===========================
+   SYSTÈME DES INDICES
+=========================== */
+
+const cluesPerDay = {};
+
+function getCluesForDay(day) {
+    if (!cluesPerDay[day]) {
+        cluesPerDay[day] = [
+            "Message suspect trouvé...",
+            "Photo cachée...",
+            "Note supprimée récupérée...",
+            "Localisation incohérente...",
+            "Audio étrange retrouvé..."
+        ].sort(() => Math.random() - 0.5).slice(0, 3);
+    }
+    return cluesPerDay[day];
+}
+
+/* ===========================
+   APPS INTERACTIVES
+=========================== */
+
+function openApp(appName) {
+    hide("phoneInterface");
+    show("appWindow");
+
+    let content = "";
+
+    switch(appName) {
+
+        case "messages":
+            content = `
+                <h2>Messages</h2>
+                <p>Discussion trouvée…</p>
+                <div class="bubble left">Pourquoi t’as tout effacé ?</div>
+                <div class="bubble right">Je devais le faire…</div>
+                <div class="bubble left">On va me retrouver.</div>
+            `;
+            break;
+
+        case "photos":
+            content = `
+                <h2>Photos</h2>
+                <img src="assets/pic1.jpg" style="width:100%;border-radius:8px;margin-top:15px;">
+                <p style="opacity:0.6;margin-top:10px;">Image modifiée…</p>
+            `;
+            break;
+
+        case "notes":
+            content = `
+                <h2>Notes</h2>
+                <p>Note retrouvée :</p>
+                <div class="noteBox">"Ne pas oublier ce qu’il a fait…"</div>
+            `;
+            break;
+
+        case "mail":
+            content = `
+                <h2>Mail</h2>
+                <p>Boîte de réception :</p>
+                <div class="mailItem">"Tu dois arrêter maintenant."</div>
+                <div class="mailItem">"Je t'avais prévenu."</div>
+            `;
+            break;
+
+        case "web":
+            content = `
+                <h2>Navigateur</h2>
+                <p>Recherches récentes :</p>
+                <ul>
+                    <li>"comment effacer traces iphone"</li>
+                    <li>"preuves disparition"</li>
+                </ul>
+            `;
+            break;
+
+        default:
+            content = `<p>Application vide.</p>`;
+    }
+
+    document.getElementById("appContent").innerHTML = content;
+}
+
+function closeApp() {
+    hide("appWindow");
+    show("phoneInterface");
+}
+
+/* ===========================
+   FIN D’UN JOUR
+=========================== */
+
+function endDay() {
+    currentDay++;
+    if (currentDay > maxDays) {
+        alert("Fin du jeu — une des 3 fins s'activera.");
+        return;
+    }
+
+    hide("phoneInterface");
+    document.getElementById("startDayNumber").innerText = "Jour " + currentDay;
+    show("startDayScreen");
+}
+
+/* ===========================
+   LANCEMENT
+=========================== */
+
+window.onload = () => startIntro();
+
+<html>
+<head>
+<style> … CSS ici … </style>
+</head>
+<body>
+… HTML ici …
+<script> … JS ici … </script>
+</body>
+</html>
