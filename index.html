@@ -7,111 +7,104 @@
 <style>
     :root {
         --accent: #c0392b;
-        --text: #e0e0e0;
-        --bg-dark: #0a0a0a;
+        --dark: #0a0a0a;
+        --gray: #1c1c1e;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         background: #000;
-        color: var(--text);
+        color: #ddd;
         overflow: hidden;
         height: 100vh;
         width: 100vw;
-        touch-action: pan-y;
     }
 
-    .screen {
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        display: none;
-        flex-direction: column;
-        background-size: cover;
-        background-position: center;
+    .screen { 
+        position: absolute; top:0; left:0; width:100%; height:100%; 
+        display: none; flex-direction: column; background-size: cover; 
+        background-position: center; transition: opacity 0.8s ease;
     }
-
     .active { display: flex !important; }
 
-    /* STATUS BAR */
-    .status-bar {
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        padding: 12px 20px;
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.95rem;
-        z-index: 100;
-        background: rgba(0,0,0,0.65);
+    /* Animations */
+    @keyframes glitch {
+        0% { transform: translate(0); }
+        20% { transform: translate(-3px, 3px); }
+        40% { transform: translate(3px, -3px); }
+        60% { transform: translate(-2px, 2px); }
+        100% { transform: translate(0); }
+    }
+    .glitch { animation: glitch 0.8s linear infinite; }
+
+    @keyframes popIn {
+        from { opacity:0; transform:scale(0.4) translateY(30px); }
+        to { opacity:1; transform:scale(1) translateY(0); }
     }
 
-    /* BACKGROUNDS */
+    .fade-in { animation: fadeIn 0.6s ease forwards; }
+    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+    /* UI */
+    .status-bar {
+        position: absolute; top:0; left:0; right:0; padding:12px 20px;
+        display:flex; justify-content:space-between; font-size:0.95rem;
+        background: rgba(0,0,0,0.75); z-index:100;
+    }
+
+    .background-overlay {
+        position: absolute; top:0; left:0; width:100%; height:100%;
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7));
+        z-index: 1;
+    }
+
     #detectivePhone { background-image: url('https://images.unsplash.com/photo-1611342799917-9c7f1b3b5b5e?w=1200'); }
     #deskScreen { background-image: url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200'); }
     #victimPhone { background-image: url('https://images.unsplash.com/photo-1544197804-9c2f2f1b2b2e?w=1200'); }
 
-    /* NAVIGATION ARROWS */
     .nav-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2.5rem;
-        opacity: 0.25;
-        cursor: pointer;
-        z-index: 150;
-        transition: opacity 0.3s;
-        user-select: none;
+        position: absolute; top:50%; transform:translateY(-50%);
+        font-size: 3.2rem; opacity: 0.25; cursor: pointer; z-index:150;
+        transition: opacity 0.4s; text-shadow: 0 0 20px black;
     }
-    .nav-arrow:hover { opacity: 0.5; }
-    .nav-left { left: 15px; }
-    .nav-right { right: 15px; }
+    .nav-arrow:hover { opacity: 0.7; }
 
-    /* APP GRID */
     .app-grid {
-        margin-top: 80px;
-        padding: 20px;
+        margin-top: 85px;
+        padding: 25px;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 35px 15px;
         text-align: center;
+        z-index: 2;
     }
 
     .app-icon {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
+        animation: popIn 0.7s ease backwards;
         cursor: pointer;
-        transition: all 0.2s;
     }
-    .app-icon:active { transform: scale(0.85); }
 
     .app-icon span {
-        width: 68px; height: 68px;
+        width: 74px; height: 74px;
         background: rgba(255,255,255,0.12);
-        border-radius: 18px;
+        border-radius: 22px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem;
-        backdrop-filter: blur(8px);
+        font-size: 2.5rem;
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(12px);
     }
 
-    /* APP WINDOW */
     .app-window {
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(15,15,15,0.98);
-        z-index: 200;
-        display: none;
-        flex-direction: column;
+        position: absolute; top:0; left:0; width:100%; height:100%;
+        background: rgba(12,12,12,0.98); z-index:200; display:none; flex-direction:column;
     }
 
     .app-header {
-        padding: 15px 20px;
-        background: #1f1f1f;
+        padding: 18px 20px;
+        background: #1a1a1a;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -119,74 +112,81 @@
     }
 
     .close-btn {
-        background: var(--accent);
-        border: none;
-        color: white;
-        padding: 8px 18px;
-        border-radius: 8px;
-        cursor: pointer;
+        background: var(--accent); color:white; border:none; padding:9px 22px;
+        border-radius: 10px; cursor:pointer; font-weight: bold;
     }
 
-    .day-label {
-        position: absolute;
-        top: 35%;
-        width: 100%;
-        text-align: center;
-        font-size: 2.8rem;
-        font-weight: 700;
-        letter-spacing: 4px;
-        text-shadow: 0 0 30px rgba(192, 57, 43, 0.8);
-        opacity: 0;
-        pointer-events: none;
-        z-index: 300;
+    .choice-btn {
+        background: #222; color:#ddd; border:1px solid #444;
+        padding: 14px; margin:8px 0; border-radius:10px; width:100%;
+        text-align:left; cursor:pointer; transition:0.3s;
+    }
+    .choice-btn:hover {
+        background: #c0392b; color:white; border-color:#c0392b;
+    }
+
+    .message {
+        background: rgba(40,40,40,0.9);
+        padding: 14px;
+        border-radius: 12px;
+        margin: 12px 0;
     }
 </style>
 </head>
 <body>
 
+<!-- LOADING -->
+<div id="loadingScreen" class="screen active" style="background:#0a0a0a; align-items:center; justify-content:center; flex-direction:column;">
+    <div class="glitch" style="font-size:2.8rem; color:#c0392b; letter-spacing:4px;">BLACKWATER</div>
+    <p style="margin-top:40px; opacity:0.6;">Établissement de la connexion sécurisée...</p>
+</div>
+
 <!-- INTRO -->
-<div id="introScreen" class="screen active">
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:40px;">
-        <h1 style="font-size:2.8rem; margin-bottom:20px; color:#c0392b;">THE BLACKWATER FILES</h1>
-        <p id="introText" style="max-width:85%; font-size:1.2rem; line-height:1.5;"></p>
-        <button id="iniziateBtn" style="margin-top:60px; padding:14px 40px; font-size:1.2rem; background:#c0392b; border:none; border-radius:12px; color:white;">INIZIATE ENQUÊTE</button>
+<div id="introScreen" class="screen">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:40px; z-index:2;">
+        <h1 style="font-size:3.1rem; color:#c0392b; margin-bottom:25px; letter-spacing:5px;">THE BLACKWATER FILES</h1>
+        <p id="introText" style="max-width:85%; font-size:1.3rem; line-height:1.7;"></p>
+        <button id="iniziateBtn" style="margin-top:70px; padding:18px 55px; font-size:1.35rem; background:#c0392b; border:none; border-radius:14px; color:white;">COMMENCER L'ENQUÊTE</button>
     </div>
 </div>
 
 <!-- START DAY -->
 <div id="startDayScreen" class="screen">
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h2>Jour <span id="currentDayStart">1</span></h2>
-        <button id="startDayBtn" style="margin-top:40px; padding:14px 40px; font-size:1.1rem; background:#c0392b; border:none; border-radius:12px; color:white;">COMMENCER LA JOURNÉE</button>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+        <h2 style="font-size:2.4rem;">Jour <span id="currentDayStart">1</span></h2>
+        <button id="startDayBtn" style="margin-top:60px; padding:18px 50px; font-size:1.25rem; background:#c0392b; border:none; border-radius:14px;">COMMENCER LA JOURNÉE</button>
     </div>
 </div>
 
 <!-- DETECTIVE PHONE -->
 <div id="detectivePhone" class="screen">
-    <div class="status-bar"><span id="phoneTime">09:41</span><span>●●●●</span></div>
+    <div class="background-overlay"></div>
+    <div class="status-bar"><span id="phoneTime">09:47</span><span>●●●●</span></div>
     <div class="app-grid" id="detectiveApps"></div>
 </div>
 
 <!-- DESK -->
 <div id="deskScreen" class="screen">
-    <div class="status-bar"><span>BUREAU DU DÉTECTIVE</span><span id="deskDay">Jour 1</span></div>
-    <div style="flex:1; display:flex; align-items:center; justify-content:center; text-align:center; padding:30px;">
+    <div class="background-overlay"></div>
+    <div class="status-bar"><span>BUREAU • DOSSIER CONFIDENTIEL</span><span id="deskDay">Jour 1</span></div>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center; text-align:center; z-index:2;">
         <div>
-            <h2>Enquête Blackwater</h2>
-            <p>Indices aujourd'hui : <span id="cluesToday">0</span>/10</p>
+            <h2>Indices du jour</h2>
+            <p style="font-size:3rem; margin:25px 0;" id="cluesToday">0 <span style="font-size:1.1rem;">/10</span></p>
         </div>
     </div>
 </div>
 
 <!-- VICTIM PHONE -->
 <div id="victimPhone" class="screen">
+    <div class="background-overlay"></div>
     <div class="status-bar"><span>TÉLÉPHONE DE LA VICTIME</span></div>
     <div class="app-grid" id="victimApps"></div>
 </div>
 
-<!-- NAVIGATION ARROWS -->
-<div class="nav-arrow nav-left" id="navLeft">←</div>
-<div class="nav-arrow nav-right" id="navRight">→</div>
+<!-- NAV ARROWS -->
+<div class="nav-arrow nav-left" id="navLeft">‹</div>
+<div class="nav-arrow nav-right" id="navRight">›</div>
 
 <!-- APP WINDOW -->
 <div id="appWindow" class="app-window">
@@ -194,119 +194,163 @@
         <h3 id="appTitle">Application</h3>
         <button class="close-btn" id="closeApp">Fermer</button>
     </div>
-    <div id="appContent" style="flex:1; padding:20px; overflow-y:auto; line-height:1.5;"></div>
+    <div id="appContent" style="flex:1; padding:20px; overflow-y:auto;"></div>
 </div>
-
-<!-- DAY LABEL -->
-<div id="dayLabel" class="day-label"></div>
 
 <script>
 // ==================== GAME STATE ====================
 let gameState = {
     currentDay: 1,
     cluesFound: 0,
-    maxDays: 100
+    maxDays: 100,
+    suspicion: 0,      // 0 à 100 - influence la fin
+    truthPoints: 0
 };
 
 let currentScreenIndex = 0;
 const screens = ['detectivePhone', 'deskScreen', 'victimPhone'];
 
 // ==================== SWITCH SCREEN ====================
-function switchScreen(direction) {
-    currentScreenIndex = (currentScreenIndex + direction + screens.length) % screens.length;
+function switchScreen(dir) {
+    currentScreenIndex = (currentScreenIndex + dir + screens.length) % screens.length;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screens[currentScreenIndex]).classList.add('active');
 }
 
-// ==================== NAV ARROWS & SWIPE ====================
-document.getElementById('navLeft').onclick = () => switchScreen(-1);
-document.getElementById('navRight').onclick = () => switchScreen(1);
+// ==================== LOADING & INTRO ====================
+setTimeout(() => {
+    document.getElementById('loadingScreen').classList.remove('active');
+    document.getElementById('introScreen').classList.add('active');
+    startIntro();
+}, 1800);
 
-// Swipe support
-let touchStartX = 0;
-document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
-document.addEventListener('touchend', e => {
-    const touchEndX = e.changedTouches[0].screenX;
-    if (touchEndX < touchStartX - 80) switchScreen(1);   // swipe left
-    if (touchEndX > touchStartX + 80) switchScreen(-1);  // swipe right
-});
-
-// ==================== INTRO ====================
 const introTexts = [
-    "Bienvenue dans <strong>The Blackwater Files</strong>.",
-    "Une affaire de disparition suspecte.",
-    "Fouillez chaque écran.",
-    "Les indices sont partout.",
+    "Une disparition qui cache bien plus...",
+    "Corruption. Mensonges. Trahisons.",
+    "Chaque choix aura des conséquences.",
     "Trois vérités possibles."
 ];
 
-let introStep = 0;
 function startIntro() {
-    const textEl = document.getElementById('introText');
+    let i = 0;
+    const el = document.getElementById('introText');
     const interval = setInterval(() => {
-        introStep++;
-        if (introStep >= introTexts.length) {
+        if (i >= introTexts.length) {
             clearInterval(interval);
-            document.getElementById('iniziateBtn').style.opacity = 1;
             return;
         }
-        textEl.innerHTML = introTexts[introStep];
-    }, 2800);
+        el.style.opacity = 0;
+        setTimeout(() => {
+            el.textContent = introTexts[i];
+            el.style.opacity = 1;
+            i++;
+        }, 300);
+    }, 2400);
 }
 
 // ==================== APPS ====================
-function createApps(containerId, apps) {
-    const container = document.getElementById(containerId);
+const detectiveAppsList = [
+    {name:"Messages", icon:"💬", action:() => openMessages()},
+    {name:"Contacts", icon:"👥", action:() => openContacts()},
+    {name:"BlackNet", icon:"🔗", action:() => openSocial()},
+    {name:"Notes", icon:"📝", action:() => openSimpleApp("Notes", "Recherchez des indices dans vos notes...")},
+    {name:"Mail", icon:"✉️", action:() => openSimpleApp("Mail", "Nouveaux mails suspects...")}
+];
+
+const victimAppsList = [
+    {name:"Messages", icon:"💬", action:() => openVictimMessages()},
+    {name:"Photos", icon:"📸", action:() => openSimpleApp("Photos Victime", "Photos supprimées...")}
+];
+
+function createApps(id, list) {
+    const container = document.getElementById(id);
     container.innerHTML = '';
-    apps.forEach(app => {
+    list.forEach((app, index) => {
         const div = document.createElement('div');
         div.className = 'app-icon';
+        div.style.animationDelay = (index * 90) + 'ms';
         div.innerHTML = `<span>${app.icon}</span><p>${app.name}</p>`;
         div.onclick = app.action;
         container.appendChild(div);
     });
 }
 
-const detectiveAppsList = [
-    {name: "Messages", icon: "💬", action: () => openMessages("detective")},
-    {name: "Contacts", icon: "👥", action: () => openApp("Contacts", "Liste des contacts...")},
-    {name: "Notes", icon: "📝", action: () => openApp("Notes", "Notes personnelles...")},
-    {name: "Mail", icon: "✉️", action: () => openApp("Mail", "Boîte mail...")},
-    {name: "Photos", icon: "📸", action: () => openApp("Photos", "Galerie...")}
-];
+// ==================== INTERACTIVE DIALOGUES ====================
+function openMessages() {
+    let html = `<h3>Messages</h3>`;
+    
+    html += `
+        <div class="message">
+            <strong>Sarah (Sœur)</strong> <small>Il y a 12 min</small><br>
+            Tu travailles encore sur cette affaire ? Fais attention à toi...<br><br>
+            <button class="choice-btn" onclick="makeChoice(1)">Je vais bien, ne t'inquiète pas</button>
+            <button class="choice-btn" onclick="makeChoice(-1)">Je ne peux pas abandonner maintenant</button>
+        </div>`;
 
-const victimAppsList = [
-    {name: "Messages", icon: "💬", action: () => openMessages("victim")},
-    {name: "Photos", icon: "📸", action: () => openApp("Photos Victime", "Photos compromettantes...")},
-    {name: "Notes", icon: "📝", action: () => openApp("Notes Victime", "Dernières notes...")}
-];
-
-function openApp(title, content) {
-    document.getElementById('appTitle').textContent = title;
-    document.getElementById('appContent').innerHTML = `<p>${content}</p><br><button onclick="findClue()" style="padding:12px 30px; background:#c0392b; color:white; border:none; border-radius:10px;">🔍 Chercher indice</button>`;
+    document.getElementById('appTitle').textContent = "Messages";
+    document.getElementById('appContent').innerHTML = html;
     document.getElementById('appWindow').style.display = 'flex';
 }
 
-// ==================== MESSAGES SYSTEM (avec numéros inconnus) ====================
-function openMessages(type) {
-    let html = `<h3>Messages</h3><div style="margin-top:15px;">`;
-
-    if (Math.random() < 0.6) { // 60% de chance d'avoir un message anonyme
-        html += `
-            <div style="background:rgba(192,57,43,0.2); padding:12px; border-radius:10px; margin:10px 0;">
-                <strong>Numéro Inconnu</strong><br>
-                <small>Il y a 2 minutes</small><br><br>
-                Vous êtes sur la bonne piste. Cherchez dans les vieux mails.<br>
-                <em>- Un allié</em>
-            </div>`;
-        setTimeout(() => findClue(), 800); // indice automatique
-    }
-
-    html += `<p style="margin-top:20px; opacity:0.7;">Autres conversations...</p></div>`;
+function openContacts() {
+    let html = `<h3>Contacts</h3>`;
+    html += `
+        <div class="message">
+            <strong>Lucas (Informateur)</strong><br>
+            J'ai du nouveau sur le maire.<br><br>
+            <button class="choice-btn" onclick="findClue();makeChoice(2)">Dis-moi tout</button>
+            <button class="choice-btn" onclick="makeChoice(-2)">Je te rappelle plus tard</button>
+        </div>`;
     
-    document.getElementById('appTitle').textContent = type === "victim" ? "Messages (Victime)" : "Messages";
+    document.getElementById('appTitle').textContent = "Contacts";
     document.getElementById('appContent').innerHTML = html;
     document.getElementById('appWindow').style.display = 'flex';
+}
+
+function openVictimMessages() {
+    let html = `<h3>Messages (Victime)</h3>`;
+    html += `
+        <div class="message">
+            <strong>Numéro Inconnu</strong><br>
+            "Arrêtez de fouiller. Ils vous observent."<br><br>
+            <button class="choice-btn" onclick="findClue()">Continuer l'enquête</button>
+            <button class="choice-btn" onclick="makeChoice(-3)">Supprimer le message</button>
+        </div>`;
+    
+    document.getElementById('appTitle').textContent = "Messages Victime";
+    document.getElementById('appContent').innerHTML = html;
+    document.getElementById('appWindow').style.display = 'flex';
+}
+
+function openSocial() {
+    let html = `<h3>BlackNet</h3>`;
+    html += `
+        <div class="message">
+            <strong>@ShadowWatcher92</strong><br>
+            Le corps n'a jamais été retrouvé... Cherchez du côté du vieux chantier naval.<br><br>
+            <button class="choice-btn" onclick="findClue()">Analyser le post</button>
+        </div>`;
+    
+    document.getElementById('appTitle').textContent = "BlackNet";
+    document.getElementById('appContent').innerHTML = html;
+    document.getElementById('appWindow').style.display = 'flex';
+}
+
+function openSimpleApp(title, text) {
+    document.getElementById('appTitle').textContent = title;
+    document.getElementById('appContent').innerHTML = `<p>${text}</p><br><button class="choice-btn" onclick="findClue()">Chercher indice</button>`;
+    document.getElementById('appWindow').style.display = 'flex';
+}
+
+// ==================== CHOIX & FIN ====================
+function makeChoice(points) {
+    gameState.suspicion += points;
+    if (gameState.suspicion < 0) gameState.suspicion = 0;
+    if (gameState.suspicion > 100) gameState.suspicion = 100;
+    
+    findClue();
+    
+    alert("Choix enregistré. Votre enquête évolue...");
 }
 
 function findClue() {
@@ -314,20 +358,33 @@ function findClue() {
     document.getElementById('cluesToday').textContent = gameState.cluesFound;
 
     if (gameState.cluesFound >= 10) {
-        alert(`🎉 Jour ${gameState.currentDay} terminé ! 10 indices trouvés.`);
         gameState.currentDay++;
         gameState.cluesFound = 0;
-        document.getElementById('deskDay').textContent = `Jour ${gameState.currentDay}`;
         document.getElementById('currentDayStart').textContent = gameState.currentDay;
-        
+        document.getElementById('deskDay').textContent = `Jour ${gameState.currentDay}`;
+
         if (gameState.currentDay > gameState.maxDays) {
-            alert("=== FIN DU JEU ===\nVous avez atteint le 100e jour.\nUne des trois fins possibles a été débloquée.");
-            gameState.currentDay = 1;
+            endGame();
+        } else {
+            alert(`Jour ${gameState.currentDay-1} terminé !`);
         }
-        switchScreen(0);
-    } else {
-        alert(`Indice trouvé ! (${gameState.cluesFound}/10)`);
     }
+}
+
+function endGame() {
+    let ending = 2; // neutre
+    if (gameState.suspicion > 70) ending = 1;      // Fin sombre
+    else if (gameState.suspicion < 30) ending = 3; // Fin vérité
+
+    let message = "";
+    if (ending === 1) message = "FIN 1 - La Corruption l'emporte. Vous avez été trop prudent.";
+    else if (ending === 3) message = "FIN 3 - Vous avez découvert la vérité. Bravo.";
+    else message = "FIN 2 - Vérité partielle. L'affaire reste trouble.";
+
+    alert(`=== FIN DU JEU ===\n${message}\n\nVous pouvez recommencer pour explorer d'autres fins.`);
+    gameState.currentDay = 1;
+    gameState.cluesFound = 0;
+    gameState.suspicion = 0;
 }
 
 // ==================== INITIALISATION ====================
@@ -339,7 +396,7 @@ document.getElementById('iniziateBtn').onclick = () => {
 document.getElementById('startDayBtn').onclick = () => {
     document.getElementById('startDayScreen').classList.remove('active');
     document.getElementById('detectivePhone').classList.add('active');
-    document.getElementById('dayLabel').textContent = `JOUR ${gameState.currentDay}`;
+    
     document.getElementById('dayLabel').style.opacity = 1;
     setTimeout(() => document.getElementById('dayLabel').style.opacity = 0, 1600);
 
@@ -351,13 +408,24 @@ document.getElementById('closeApp').onclick = () => {
     document.getElementById('appWindow').style.display = 'none';
 };
 
-// Mise à jour heure
-setInterval(() => {
-    const time = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-    document.getElementById('phoneTime').textContent = time;
-}, 30000);
+document.getElementById('navLeft').onclick = () => switchScreen(-1);
+document.getElementById('navRight').onclick = () => switchScreen(1);
 
-window.onload = startIntro;
+// Swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+document.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (diff > 80) switchScreen(1);
+    if (diff < -80) switchScreen(-1);
+});
+
+// Clock
+setInterval(() => {
+    document.getElementById('phoneTime').textContent = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+}, 20000);
+
+window.onload = () => {};
 </script>
 </body>
 </html>
